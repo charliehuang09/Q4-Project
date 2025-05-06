@@ -1,8 +1,10 @@
-import server.Screen;
+import javax.swing.JFrame;
+
+import server.ServerScreen;
 
 class Client {
   public static void main(String[] args) {
-    Screen screen = new Screen();
+    ServerScreen screen = new ServerScreen();
     JFrame frame = new JFrame("Screen");
 
     frame.add(screen);

@@ -1,8 +1,10 @@
-import client.Screen;
+import javax.swing.JFrame;
+
+import client.ClientScreen;
 
 class Client {
   public static void main(String[] args) {
-    Screen screen = new Screen();
+    ClientScreen screen = new ClientScreen();
     JFrame frame = new JFrame("Screen");
 
     frame.add(screen);
