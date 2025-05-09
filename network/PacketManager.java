@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.HashMap;
 
-public class PacketManager {
+public abstract class PacketManager implements Runnable {
 
     private Socket connection;
     private DataInputStream in;
@@ -37,7 +37,7 @@ public class PacketManager {
             throw new RuntimeException("Failed to read packet: " + id);
         }
     }
-
+    
     public void sendPacket(Packet packet) {
         try {
             packet.write(out);
@@ -46,11 +46,33 @@ public class PacketManager {
             throw new RuntimeException("Error sending packet: " + packet.getClass().getName());
         }
     }
-
+    
+    public abstract void onReceive(Packet packet);
+    
     public void connect(String host, int port) throws IOException {
         connection = new Socket(host, port);
-
+        
         in = new DataInputStream(connection.getInputStream());
         out = new DataOutputStream(connection.getOutputStream());
+    }
+
+    public void disconnect() {
+        try {
+            connection.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void run() {
+        try {
+            while (true) {
+                Packet packet = receivePacket();
+                onReceive(packet);
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // for temporary debug
+            disconnect();
+        }
     }
 }
