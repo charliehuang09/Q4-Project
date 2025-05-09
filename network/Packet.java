@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public abstract class Packet {
-  protected static final byte id = 0;
   protected static int lastTimestamp = 0;
   protected int timestamp;
 
@@ -13,13 +12,11 @@ public abstract class Packet {
     this.timestamp = lastTimestamp++;
   }
 
-  public static byte getId() {
-    return id;
-  }
+  public abstract byte getId();
 
   public byte[] getHeader() {
     ByteBuffer b = ByteBuffer.allocate(1 + 4);
-    b.put(id);
+    b.put(getId());
     b.putInt(timestamp);
     return b.array();
   }
@@ -28,7 +25,7 @@ public abstract class Packet {
     return new byte[0];
   }
 
-  public abstract Packet readPacket(BufferedReader in) throws IOException;
+  public abstract void readPacket(BufferedReader in) throws IOException;
 
   public byte[] asBytes() {
     byte[] header = getHeader();

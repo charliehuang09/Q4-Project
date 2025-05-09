@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.HashMap;
-import java.util.function.Function;
 
 public class PacketManager {
 
@@ -15,14 +14,33 @@ public class PacketManager {
     private PrintWriter out;
 
     // for registering the readPacket() function per packet
-    private HashMap<Byte, Function<BufferedReader, ? extends Packet>> deserializers;
+    private HashMap<Byte, Class<? extends Packet>> packetMap;
 
     public void registerPacket(Class<? extends Packet> packetClass) {
+        try {
+            byte id = (byte) packetClass.getDeclaredConstructor().newInstance().getId();
+            packetMap.put(id, packetClass);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to register packet: " + packetClass.getName(), e);
+        }
     }
 
     public Packet receivePacket() throws IOException {
         byte id = (byte) in.read();
-        return deserializers.get(id).apply(in);
+
+        try {
+            Packet packet = packetMap.get(id).getDeclaredConstructor().newInstance();
+            packet.readPacket(in);
+            return packet;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to read packet: " + id);
+        }
+    }
+
+    public void sendPacket(Packet packet) {
+        char[] buf = new String(packet.asBytes()).toCharArray();
+        out.write(buf);
+        out.flush();
     }
 
     public void connect(String host, int port) throws IOException {
