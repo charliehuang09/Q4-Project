@@ -1,17 +1,16 @@
 package network;
 
-import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.HashMap;
 
 public class PacketManager {
 
     private Socket connection;
-    private BufferedReader in;
-    private PrintWriter out;
+    private DataInputStream in;
+    private DataOutputStream out;
 
     // for registering the readPacket() function per packet
     private HashMap<Byte, Class<? extends Packet>> packetMap;
@@ -26,11 +25,13 @@ public class PacketManager {
     }
 
     public Packet receivePacket() throws IOException {
-        byte id = (byte) in.read();
+        byte id = in.readByte();
+        int timestamp = in.readInt();
 
         try {
             Packet packet = packetMap.get(id).getDeclaredConstructor().newInstance();
-            packet.readPacket(in);
+            packet.setTimestamp(timestamp);
+            packet.read(in);
             return packet;
         } catch (Exception e) {
             throw new RuntimeException("Failed to read packet: " + id);
@@ -38,15 +39,18 @@ public class PacketManager {
     }
 
     public void sendPacket(Packet packet) {
-        char[] buf = new String(packet.asBytes()).toCharArray();
-        out.write(buf);
-        out.flush();
+        try {
+            packet.write(out);
+            out.flush();
+        } catch (IOException e) {
+            throw new RuntimeException("Error sending packet: " + packet.getClass().getName());
+        }
     }
 
     public void connect(String host, int port) throws IOException {
         connection = new Socket(host, port);
 
-        in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        out = new PrintWriter(connection.getOutputStream(), false);
+        in = new DataInputStream(connection.getInputStream());
+        out = new DataOutputStream(connection.getOutputStream());
     }
 }

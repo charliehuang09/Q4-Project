@@ -1,8 +1,8 @@
 package network;
 
-import java.io.BufferedReader;
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 public abstract class Packet {
   protected static int lastTimestamp = 0;
@@ -14,31 +14,25 @@ public abstract class Packet {
 
   public abstract byte getId();
 
-  public byte[] getHeader() {
-    ByteBuffer b = ByteBuffer.allocate(1 + 4);
-    b.put(getId());
-    b.putInt(timestamp);
-    return b.array();
+  public int getTimestamp() {
+    return timestamp;
   }
 
-  public byte[] getBody() {
-    return new byte[0];
+  public void setTimestamp(int timestamp) {
+    this.timestamp = timestamp;
   }
 
-  public abstract void readPacket(BufferedReader in) throws IOException;
-
-  public byte[] asBytes() {
-    byte[] header = getHeader();
-    byte[] body = getBody();
-
-    byte[] bytes = new byte[header.length + body.length];
-    
-    int i = 0;
-    for (Byte b : header)
-      bytes[i++] = b;
-    for (Byte b : body)
-      bytes[i++] = b;
-
-    return bytes;
+  public void writeHeader(DataOutput out) throws IOException {
+    out.writeByte(getId());
+    out.writeInt(timestamp);
   }
+
+  public void writeBody(DataOutput out) throws IOException {}
+
+  public void write(DataOutput out) throws IOException {
+    writeHeader(out);
+    writeBody(out);
+  }
+
+  public abstract void read(DataInput in) throws IOException;
 }
