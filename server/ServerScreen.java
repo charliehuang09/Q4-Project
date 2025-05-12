@@ -7,7 +7,14 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 
 public class ServerScreen extends JPanel implements ActionListener {
-  public ServerScreen() {}
+  public ServerScreen() {
+    JFrame frame = new JFrame("Server Screen");
+    frame.add(this);
+
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.pack();
+    frame.setVisible(true);
+  }
 
   public Dimension getPreferredSize() {
     return new Dimension(1000, 450);
