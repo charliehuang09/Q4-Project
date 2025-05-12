@@ -27,7 +27,7 @@ public class Player extends Sprite {
   public boolean isColliding(Sprite sprite) {
     if (sprite instanceof Player) {
       Player player = (Player) sprite;
-      Collision.isColliding(this.body, player.body);
+      return Collision.isColliding(this.body, player.body);
     }
     throw new RuntimeException("Unhandled collision type");
   }
