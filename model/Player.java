@@ -8,7 +8,6 @@ public class Player extends Sprite {
   private CircleRigid body;
 
   public Player(float x, float y, Team team) {
-    super(x, y, 0, 0, 1);
     this.team = team;
     this.body = new CircleRigid(x, y, RADIUS);
   }
@@ -26,6 +25,10 @@ public class Player extends Sprite {
 
   @Override
   public boolean isColliding(Sprite sprite) {
-    return false;
+    if (sprite instanceof Player) {
+      Player player = (Player) sprite;
+      Collision.isColliding(this.body, player.body);
+    }
+    throw new RuntimeException("Unhandled collision type");
   }
 }

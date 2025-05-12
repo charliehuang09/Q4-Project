@@ -8,7 +8,7 @@ public class Collision {
         < (circle1.radius + circle2.radius) * (circle1.radius * circle2.radius));
   }
 
-  public boolean isColliding(RectangleRigid rectangle1, RectangleRigid rectangle2) {
+  public static boolean isColliding(RectangleRigid rectangle1, RectangleRigid rectangle2) {
     if (rectangle1.rightX() < rectangle2.leftX()) return false;
     if (rectangle2.rightX() < rectangle1.leftX()) return false;
 
@@ -18,7 +18,7 @@ public class Collision {
     return true;
   }
 
-  public boolean isColliding(CircleRigid circle, RectangleRigid rectangle) {
+  public static boolean isColliding(CircleRigid circle, RectangleRigid rectangle) {
     if (circle.rightX() < rectangle.leftX()) return false;
     if (rectangle.rightX() < circle.leftX()) return false;
 
@@ -26,5 +26,9 @@ public class Collision {
     if (rectangle.downY() < circle.upY()) return false;
 
     return true;
+  }
+
+  public static boolean isColliding(RectangleRigid rectangle, CircleRigid circle) {
+    return isColliding(circle, rectangle);
   }
 }
