@@ -1,7 +1,5 @@
 import javax.swing.JFrame;
 
-import client.ClientScreen;
-
 public class Client {
   public static void main(String[] args) {
     ClientScreen screen = new ClientScreen();

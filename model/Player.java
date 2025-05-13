@@ -18,10 +18,22 @@ public class Player extends Sprite {
   }
 
   @Override
-  public void draw(Graphics g) {}
+  public void draw(Graphics g) {
+    System.out.println("drawOval");
+    g.drawOval((int) body.state.x, (int) body.state.y, (int) RADIUS, (int) RADIUS);
+  }
 
   @Override
-  public void applyForce(float x, float y, float mass) {}
+  public void applyForce(float x, float y, float mass) {
+    body.state.x_vel += x;
+    body.state.y_vel += y;
+  }
+
+  @Override
+  public void update() {
+    body.state.x += body.state.y_vel;
+    body.state.y += body.state.x_vel;
+  }
 
   @Override
   public boolean isColliding(Sprite sprite) {
