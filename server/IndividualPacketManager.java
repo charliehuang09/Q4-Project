@@ -1,4 +1,4 @@
-package client;
+package server;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -11,42 +11,34 @@ import network.Packet;
 import network.PacketManager;
 import network.packets.UpdatePosPacket;
 
-public class ClientPacketManager extends PacketManager {
+public class IndividualPacketManager extends PacketManager {
 
   protected Socket socket;
   protected DataInputStream in;
   protected DataOutputStream out;
+  private ServerPacketManager server;
 
   private ExecutorService executor;
 
-  public ClientPacketManager() {
+  public IndividualPacketManager(Socket socket, ServerPacketManager server) throws IOException {
+    this.socket = socket;
+    this.in = new DataInputStream(socket.getInputStream());
+    this.out = new DataOutputStream(socket.getOutputStream());
+    this.server = server;
+    
     this.executor = Executors.newSingleThreadExecutor();
-
+  
     registerPacket(UpdatePosPacket.class);
   }
 
   @Override
   public void onReceive(Packet packet) {
-    System.out.println("[client:network] Received " + packet.getId());
+    server.onReceive(packet);
   }
 
-  public void sendPacket(Packet packet) {
-    super.sendPacket(packet, out);
-  }
-
-  public void connect(String host, int port) throws IOException {
-    socket = new Socket(host, port);
-
-    in = new DataInputStream(socket.getInputStream());
-    out = new DataOutputStream(socket.getOutputStream());
-  }
-
+  @Override
   public void disconnect() {
-    try {
-      socket.close();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    executor.shutdownNow();
   }
 
   public void start() {
@@ -57,7 +49,7 @@ public class ClientPacketManager extends PacketManager {
           onReceive(packet);
         }
       } catch (IOException e) {
-        e.printStackTrace(); // for temporary debug
+        e.printStackTrace();
         disconnect();
       }
     });

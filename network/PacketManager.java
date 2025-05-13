@@ -10,6 +10,10 @@ public abstract class PacketManager {
   // for registering the readPacket() function per packet
   private HashMap<Byte, Class<? extends Packet>> packetMap;
 
+  public PacketManager() {
+    this.packetMap = new HashMap<Byte, Class<? extends Packet>>();
+  }
+
   public void registerPacket(Class<? extends Packet> packetClass) {
     try {
       byte id = (byte) packetClass.getDeclaredConstructor().newInstance().getId();

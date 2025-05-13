@@ -1,77 +1,54 @@
 package server;
 
-import java.io.DataInputStream;
 import java.io.IOException;
-import java.net.InetSocketAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import network.Packet;
 import network.PacketManager;
 
 public class ServerPacketManager extends PacketManager {
+  public static final int MAX_CONNECTIONS = 4;
 
-  private Selector selector;
-  private ServerSocketChannel server;
+  private ServerSocket serverSocket;
+  private ExecutorService executor;
+  private ArrayList<IndividualPacketManager> connectionManagers;
+
+  public ServerPacketManager() {
+    executor = Executors.newFixedThreadPool(MAX_CONNECTIONS);
+    connectionManagers = new ArrayList<>();
+  }
 
   @Override
   public void onReceive(Packet packet) {
-    System.out.println("[server:network] Received" + packet.getId());
+    System.out.println("[server:network] Received " + packet.getId());
   }
 
   @Override
   public void disconnect() {
-    try {
-      selector.close();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+    for (IndividualPacketManager ipm : connectionManagers) {
+      ipm.disconnect();
     }
   }
 
-  public void start(int port) {
-    try {
-      selector = Selector.open();
-
-      server = ServerSocketChannel.open();
-      server.bind(new InetSocketAddress(port));
-      server.configureBlocking(false);
-      server.register(selector, SelectionKey.OP_ACCEPT);
-    } catch (IOException e) {
-      throw new RuntimeException("Failed to start server");
-    }
-
-
-    try {
-      while (true) {
-        selector.select();
+  public void start(int port) throws IOException {
+    executor.submit(() -> {
+      try {
+        serverSocket = new ServerSocket(port);
   
-        Set<SelectionKey> selectedKeys = selector.selectedKeys();
-        Iterator<SelectionKey> iterator = selectedKeys.iterator();
-  
-        while (iterator.hasNext()) {
-          SelectionKey key = iterator.next();
-          iterator.remove();
-  
-          if (key.isAcceptable()) {
-            ServerSocketChannel server = (ServerSocketChannel) key.channel();
-            SocketChannel client = server.accept();
-            client.configureBlocking(false);
-            client.register(selector, SelectionKey.OP_READ);
-          } else if (key.isReadable()) {
-            SocketChannel client = (SocketChannel) key.channel();
-            Socket clientSocket = client.socket();
-            receivePacket(new DataInputStream(clientSocket.getInputStream()));
-          }
+        while (true) {
+          Socket newConnection = serverSocket.accept();
+          IndividualPacketManager ipm = new IndividualPacketManager(newConnection, this);
+          ipm.start();
+          connectionManagers.add(ipm);
         }
+      } catch (IOException e) {
+        e.printStackTrace();
+        disconnect();
       }
-    } catch (IOException e) {
-      e.printStackTrace();
-      disconnect();
-    }
+    });
   }
 }

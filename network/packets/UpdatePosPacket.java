@@ -9,6 +9,12 @@ import network.Packet;
 public class UpdatePosPacket extends Packet {
   private float x, y;
 
+  // for registerPacket compatibility
+  public UpdatePosPacket() {
+    this.x = 0;
+    this.y = 0;
+  }
+
   public UpdatePosPacket(float x, float y) {
     this.x = x;
     this.y = y;
