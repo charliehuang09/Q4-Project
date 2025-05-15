@@ -7,17 +7,19 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import client.view.ClientScreen;
 import network.Packet;
 import network.PacketManager;
 import network.packets.UpdatePosPacket;
 
 public class ClientPacketManager extends PacketManager {
-
   protected Socket socket;
   protected DataInputStream in;
   protected DataOutputStream out;
 
   private ExecutorService executor;
+
+  private ClientScreen screen;
 
   public ClientPacketManager() {
     this.executor = Executors.newSingleThreadExecutor();
@@ -25,12 +27,16 @@ public class ClientPacketManager extends PacketManager {
     registerPacket(UpdatePosPacket.class);
   }
 
+  public void setScreen(ClientScreen screen) {
+    this.screen = screen;
+  }
+
   @Override
   public void onReceive(Packet packet) {
     System.out.println("[client:network] Received " + packet.getId());
   }
 
-  public void sendPacket(Packet packet) {
+  public void sendPacket(Packet packet) throws IOException {
     super.sendPacket(packet, out);
   }
 
@@ -43,7 +49,9 @@ public class ClientPacketManager extends PacketManager {
 
   public void disconnect() {
     try {
+      screen.showScreen("startScreen");
       socket.close();
+      executor.shutdownNow();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -57,7 +65,7 @@ public class ClientPacketManager extends PacketManager {
           onReceive(packet);
         }
       } catch (IOException e) {
-        e.printStackTrace(); // for temporary debug
+        System.out.println("[client:network] Connection closed by server: " + e.getMessage());
         disconnect();
       }
     });

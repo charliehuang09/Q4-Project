@@ -37,13 +37,9 @@ public abstract class PacketManager {
     }
   }
 
-  public void sendPacket(Packet packet, DataOutputStream out) {
-    try {
-      packet.write(out);
-      out.flush();
-    } catch (IOException e) {
-      throw new RuntimeException("Error sending packet: " + packet.getClass().getName());
-    }
+  public void sendPacket(Packet packet, DataOutputStream out) throws IOException {
+    packet.write(out);
+    out.flush();
   }
 
   public abstract void onReceive(Packet packet);

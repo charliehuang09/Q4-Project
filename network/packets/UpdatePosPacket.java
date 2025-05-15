@@ -7,7 +7,7 @@ import java.io.IOException;
 import network.Packet;
 
 public class UpdatePosPacket extends Packet {
-  private float x, y;
+  public float x, y;
 
   // for registerPacket compatibility
   public UpdatePosPacket() {
@@ -22,7 +22,7 @@ public class UpdatePosPacket extends Packet {
 
   @Override
   public byte getId() {
-    return 0x1;
+    return 0x2;
   }
 
   @Override
