@@ -19,7 +19,6 @@ public class ClientScreen extends JPanel implements ActionListener {
         new Thread(
             () -> {
               while (true) {
-                System.out.println("Updateint");
                 this.update();
                 try {
                   Thread.sleep(500); // 500 milliseconds = 0.5 seconds

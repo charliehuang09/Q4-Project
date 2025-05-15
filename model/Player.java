@@ -19,7 +19,6 @@ public class Player extends Sprite {
 
   @Override
   public void draw(Graphics g) {
-    System.out.println("drawOval");
     g.drawOval((int) body.state.x, (int) body.state.y, (int) RADIUS, (int) RADIUS);
   }
 
