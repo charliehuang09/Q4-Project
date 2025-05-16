@@ -19,12 +19,11 @@ public class ClientScreen extends JPanel implements ActionListener {
         new Thread(
             () -> {
               while (true) {
-                System.out.println("Updateint");
                 this.update();
                 try {
-                  Thread.sleep(500); // 500 milliseconds = 0.5 seconds
+                  Thread.sleep(50);
                 } catch (InterruptedException e) {
-                  e.printStackTrace(); // Handle interrupted exception
+                  e.printStackTrace();
                 }
               }
             });
@@ -33,7 +32,8 @@ public class ClientScreen extends JPanel implements ActionListener {
 
   private void update() {
     for (Sprite sprite : sprites) {
-      sprite.applyForce(1, 1, 1);
+      sprite.applyForce(0, 0.1f);
+      sprite.applyDrag(0.9f);
     }
     for (Sprite sprite : sprites) {
       sprite.update();
