@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.*;
+import model.Platform;
 import model.Player;
 import model.Sprite;
 import model.Team;
@@ -15,6 +16,7 @@ public class ClientScreen extends JPanel implements ActionListener {
 
     this.sprites = new ArrayList<Sprite>();
     this.sprites.add(new Player(100, 100, Team.BLUE));
+    this.sprites.add(new Platform(100, 200, 1000, 10));
     Thread thread =
         new Thread(
             () -> {
@@ -33,10 +35,10 @@ public class ClientScreen extends JPanel implements ActionListener {
   private void update() {
     for (Sprite sprite : sprites) {
       sprite.applyForce(0, 0.1f);
-      sprite.applyDrag(0.9f);
+      sprite.applyDrag(0.99f);
     }
     for (Sprite sprite : sprites) {
-      sprite.update();
+      sprite.update(sprites);
     }
     repaint();
   }
