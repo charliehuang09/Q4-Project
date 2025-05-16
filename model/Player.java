@@ -47,4 +47,10 @@ public class Player extends Sprite {
     }
     throw new RuntimeException("Unhandled collision type");
   }
+
+  @Override
+  public void applyDrag(float multiplier) {
+    this.body.state.x_vel *= multiplier;
+    this.body.state.y_vel *= multiplier;
+  }
 }

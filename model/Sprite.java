@@ -14,4 +14,6 @@ public abstract class Sprite {
   public abstract void update();
 
   public abstract boolean isColliding(Sprite sprite);
+
+  public abstract void applyDrag(float x);
 }

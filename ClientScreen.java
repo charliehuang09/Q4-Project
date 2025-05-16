@@ -21,7 +21,7 @@ public class ClientScreen extends JPanel implements ActionListener {
               while (true) {
                 this.update();
                 try {
-                  Thread.sleep(500);
+                  Thread.sleep(50);
                 } catch (InterruptedException e) {
                   e.printStackTrace();
                 }
@@ -33,6 +33,7 @@ public class ClientScreen extends JPanel implements ActionListener {
   private void update() {
     for (Sprite sprite : sprites) {
       sprite.applyForce(0, 0.1f);
+      sprite.applyDrag(0.9f);
     }
     for (Sprite sprite : sprites) {
       sprite.update();
