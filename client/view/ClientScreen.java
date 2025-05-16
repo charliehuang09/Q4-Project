@@ -36,7 +36,7 @@ public class ClientScreen extends JPanel implements ActionListener {
     frame.setVisible(true);
 
     this.executor = Executors.newSingleThreadScheduledExecutor();
-    this.executor.scheduleAtFixedRate(mainPanel::repaint, 0, 1000 / 20, TimeUnit.MILLISECONDS);
+    this.executor.scheduleAtFixedRate(mainPanel::repaint, 0, 1000 / 60, TimeUnit.MILLISECONDS);
   }
 
   public void setPacketManager(ClientPacketManager pm) {

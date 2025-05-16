@@ -1,9 +1,11 @@
+package render;
+
 import java.awt.Graphics;
-import java.util.ArrayList;
 import model.Sprite;
+import struct.MyArrayList;
 
 public class Render {
-  static void draw(Graphics g, ArrayList<Sprite> sprites) {
+  public static void draw(Graphics g, MyArrayList<Sprite> sprites) {
     for (Sprite sprite : sprites) {
       sprite.draw(g);
     }

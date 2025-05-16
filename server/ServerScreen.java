@@ -4,12 +4,13 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.*;
+
+import struct.MyArrayList;
 
 public class ServerScreen extends JPanel implements ActionListener {
   private static int WIDTH = 1000;
@@ -54,7 +55,7 @@ public class ServerScreen extends JPanel implements ActionListener {
     textArea.setText(text);
   }
 
-  public void updateIPs(ArrayList<String> ips) {
+  public void updateIPs(MyArrayList<String> ips) {
     StringBuilder sb = new StringBuilder();
     sb.append("Connected clients:\n");
     for (String ip : ips) {

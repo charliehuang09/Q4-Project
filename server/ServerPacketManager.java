@@ -3,13 +3,13 @@ package server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import network.Packet;
 import network.PacketManager;
 import network.packets.UpdatePosPacket;
+import struct.MyArrayList;
 import network.packets.JoinRequestPacket;
 
 public class ServerPacketManager extends PacketManager {
@@ -18,15 +18,15 @@ public class ServerPacketManager extends PacketManager {
   private ServerSocket serverSocket;
   private ExecutorService executor;
   private int lastConnectionId = 0;
-  private ArrayList<IndividualPacketManager> connectionManagers;
-  private ArrayList<String> clientIps;
+  private MyArrayList<IndividualPacketManager> connectionManagers;
+  private MyArrayList<String> clientIps;
 
   private ServerScreen screen;
 
   public ServerPacketManager() {
     executor = Executors.newFixedThreadPool(MAX_CONNECTIONS);
-    connectionManagers = new ArrayList<>();
-    clientIps = new ArrayList<>();
+    connectionManagers = new MyArrayList<>();
+    clientIps = new MyArrayList<>();
   }
 
   public void setScreen(ServerScreen screen) {
