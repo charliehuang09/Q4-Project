@@ -9,7 +9,11 @@ public abstract class Sprite {
 
   public abstract void applyForce(float x, float y, float mass);
 
+  public abstract void applyForce(float x, float y);
+
   public abstract void update();
 
   public abstract boolean isColliding(Sprite sprite);
+
+  public abstract void applyDrag(float x);
 }

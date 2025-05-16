@@ -19,14 +19,18 @@ public class Player extends Sprite {
 
   @Override
   public void draw(Graphics g) {
-    System.out.println("drawOval");
-    g.drawOval((int) body.state.x, (int) body.state.y, (int) RADIUS, (int) RADIUS);
+    g.drawOval((int) body.state.y, (int) body.state.x, (int) RADIUS, (int) RADIUS);
   }
 
   @Override
   public void applyForce(float x, float y, float mass) {
     body.state.x_vel += x;
     body.state.y_vel += y;
+  }
+
+  @Override
+  public void applyForce(float x, float y) {
+    applyForce(x, y, body.state.mass);
   }
 
   @Override
@@ -42,5 +46,11 @@ public class Player extends Sprite {
       return Collision.isColliding(this.body, player.body);
     }
     throw new RuntimeException("Unhandled collision type");
+  }
+
+  @Override
+  public void applyDrag(float multiplier) {
+    this.body.state.x_vel *= multiplier;
+    this.body.state.y_vel *= multiplier;
   }
 }
