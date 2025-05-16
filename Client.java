@@ -1,14 +1,11 @@
-import javax.swing.JFrame;
+import client.ClientPacketManager;
+import client.view.ClientScreen;
 
 public class Client {
   public static void main(String[] args) {
     ClientScreen screen = new ClientScreen();
-    JFrame frame = new JFrame("Screen");
-
-    frame.add(screen);
-
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.pack();
-    frame.setVisible(true);
+    ClientPacketManager pm = new ClientPacketManager();
+    screen.setPacketManager(pm);
+    pm.setScreen(screen);
   }
 }

@@ -1,16 +1,20 @@
-import javax.swing.JFrame;
+import java.io.IOException;
 
+import server.ServerPacketManager;
 import server.ServerScreen;
 
 public class Server {
+
   public static void main(String[] args) {
     ServerScreen screen = new ServerScreen();
-    JFrame frame = new JFrame("Screen");
+    ServerPacketManager pm = new ServerPacketManager();
+    screen.setPacketManager(pm);
+    pm.setScreen(screen);
 
-    frame.add(screen);
-
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.pack();
-    frame.setVisible(true);
+    try {
+      pm.start(31415);
+    } catch (IOException e) {
+      throw new RuntimeException("Failed to start server");
+    }
   }
 }
