@@ -3,15 +3,16 @@ package network;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
+
+import struct.MyHashMap;
 
 public abstract class PacketManager {
 
   // for registering the readPacket() function per packet
-  private HashMap<Byte, Class<? extends Packet>> packetMap;
+  private MyHashMap<Byte, Class<? extends Packet>> packetMap;
 
   public PacketManager() {
-    this.packetMap = new HashMap<Byte, Class<? extends Packet>>();
+    this.packetMap = new MyHashMap<Byte, Class<? extends Packet>>();
   }
 
   public void registerPacket(Class<? extends Packet> packetClass) {
