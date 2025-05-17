@@ -25,8 +25,10 @@ public abstract class PacketManager {
   }
 
   public Packet receivePacket(DataInputStream in) throws IOException {
+    System.out.println("[network] Receiving packet...");
     byte id = in.readByte();
     int timestamp = in.readInt();
+    System.out.println("[network] Received packet with ID: " + id + " and timestamp: " + timestamp);
 
     try {
       Packet packet = packetMap.get(id).getDeclaredConstructor().newInstance();

@@ -1,12 +1,14 @@
 package struct;
 
 public class MyHashMap<K, V> {
+    private static final int DEFAULT_CAPACITY = 10000;
+    
     private Object[] hashArray;
     private int size;
     private MyHashSet<K> keySet;
 
     public MyHashMap() {
-        hashArray = new Object[1000];
+        hashArray = new Object[DEFAULT_CAPACITY];
         size = 0;
         keySet = new MyHashSet<K>();
     }
@@ -49,6 +51,6 @@ public class MyHashMap<K, V> {
 
     private int getIndex(Object key) {
         // use python modulus
-        return (((key.hashCode() % 1000) + 1000) % 1000);
+        return (((key.hashCode() % DEFAULT_CAPACITY) + DEFAULT_CAPACITY) % DEFAULT_CAPACITY);
     }
 }

@@ -1,13 +1,13 @@
 import java.io.IOException;
 
-import server.ServerPacketManager;
+import server.ServerNetworkManager;
 import server.ServerScreen;
 
 public class Server {
 
   public static void main(String[] args) {
     ServerScreen screen = new ServerScreen();
-    ServerPacketManager pm = new ServerPacketManager();
+    ServerNetworkManager pm = new ServerNetworkManager();
     screen.setPacketManager(pm);
     pm.setScreen(screen);
 

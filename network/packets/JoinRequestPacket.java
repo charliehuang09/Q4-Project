@@ -7,6 +7,8 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 public class JoinRequestPacket extends Packet {
+  // Note: Currently unused
+
   public String clientName;
 
   public JoinRequestPacket() {

@@ -10,7 +10,7 @@ import java.util.concurrent.Executors;
 import client.view.ClientScreen;
 import network.Packet;
 import network.PacketManager;
-import network.packets.UpdatePosPacket;
+import network.packets.SwitchStatePacket;
 
 public class ClientPacketManager extends PacketManager {
   protected Socket socket;
@@ -24,32 +24,48 @@ public class ClientPacketManager extends PacketManager {
   public ClientPacketManager() {
     this.executor = Executors.newSingleThreadExecutor();
 
-    registerPacket(UpdatePosPacket.class);
+    registerPacket(SwitchStatePacket.class);
+  }
+
+  @Override
+  public void onReceive(Packet packet) {
+    System.out.println("[client:network] Received " + packet.getId());
+
+    if (packet instanceof network.packets.SwitchStatePacket ssp) {
+      if ("IN_GAME".equals(ssp.getNewState())) {
+        screen.setCurrentState(ClientScreen.GameState.IN_GAME);
+        System.out.println("[client:network] Switched to IN_GAME state.");
+      }
+    }
   }
 
   public void setScreen(ClientScreen screen) {
     this.screen = screen;
   }
 
-  @Override
-  public void onReceive(Packet packet) {
-    System.out.println("[client:network] Received " + packet.getId());
-  }
 
-  public void sendPacket(Packet packet) throws IOException {
-    super.sendPacket(packet, out);
+  public void sendPacket(Packet packet) {
+    try {
+      super.sendPacket(packet, out);
+    } catch (Exception e) {
+      System.out.println("[client:network] Failed to send packet, disconnecting: " + e.getMessage());
+      disconnect();
+    }
   }
 
   public void connect(String host, int port) throws IOException {
+    System.out.println("[client:network] Attempting to connect to " + host + ":" + port);
     socket = new Socket(host, port);
 
     in = new DataInputStream(socket.getInputStream());
     out = new DataOutputStream(socket.getOutputStream());
+
+    start();
   }
 
   public void disconnect() {
     try {
-      screen.showScreen("startScreen");
+      screen.setCurrentState(ClientScreen.GameState.MENU);
       socket.close();
       executor.shutdownNow();
     } catch (IOException e) {
@@ -61,6 +77,7 @@ public class ClientPacketManager extends PacketManager {
     executor.submit(() -> {
       try {
         while (true) {
+          System.out.println("[client:network] Waiting for packet...");
           Packet packet = receivePacket(in);
           onReceive(packet);
         }
