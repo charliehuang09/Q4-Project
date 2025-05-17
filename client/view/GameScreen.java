@@ -13,7 +13,7 @@ import struct.MyArrayList;
 import render.Render;
 
 public class GameScreen extends JPanel {
-  private ClientScreen clientScreen;
+  @SuppressWarnings("unused") private ClientScreen clientScreen;
   private MyArrayList<Sprite> sprites;
 
   public GameScreen(ClientScreen clientScreen) {

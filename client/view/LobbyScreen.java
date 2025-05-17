@@ -3,8 +3,6 @@ package client.view;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import network.packets.TeamSelectionPacket;
-import network.packets.ReadyUpPacket;
 
 public class LobbyScreen extends JPanel {
   private ClientScreen clientScreen;
@@ -27,9 +25,13 @@ public class LobbyScreen extends JPanel {
     teamLabel = new JLabel("Team: None", SwingConstants.CENTER);
     centerPanel.add(teamLabel);
 
-    JButton selectTeamButton = new JButton("Select Team");
-    selectTeamButton.addActionListener(this::selectTeam);
-    centerPanel.add(selectTeamButton);
+    JButton blueTeamButton = new JButton("Join Blue Team");
+    blueTeamButton.addActionListener(_ -> joinTeam("Blue"));
+    centerPanel.add(blueTeamButton);
+
+    JButton redTeamButton = new JButton("Join Red Team");
+    redTeamButton.addActionListener(_ -> joinTeam("Red"));
+    centerPanel.add(redTeamButton);
 
     this.add(centerPanel, BorderLayout.CENTER);
 
@@ -41,26 +43,14 @@ public class LobbyScreen extends JPanel {
     isReady = false;
   }
 
-  private void selectTeam(ActionEvent e) {
-    String[] teams = { "Blue", "Red" };
-    String selectedTeam = (String) JOptionPane.showInputDialog(
-        this,
-        "Select a team:",
-        "Team Selection",
-        JOptionPane.PLAIN_MESSAGE,
-        null,
-        teams,
-        teams[0]);
-
-    if (selectedTeam != null) {
-      teamLabel.setText("Team: " + selectedTeam);
-      clientScreen.getPacketManager().sendPacket(new TeamSelectionPacket(selectedTeam));
-    }
+  private void joinTeam(String team) {
+    teamLabel.setText("Team: " + team);
+    clientScreen.getController().joinTeam(team);
   }
 
   private void toggleReady(ActionEvent e) {
     isReady = !isReady;
     readyButton.setText(isReady ? "Unready" : "Ready");
-      clientScreen.getPacketManager().sendPacket(new ReadyUpPacket(isReady));
+    clientScreen.getController().readyUp(isReady);
   }
 }

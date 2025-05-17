@@ -9,24 +9,16 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.*;
 
-import client.ClientPacketManager;
+import client.ClientController;
 
 public class ClientScreen extends JPanel implements ActionListener {
-  private ClientPacketManager pm;
   private JPanel mainPanel;
   private CardLayout cardLayout;
+  
+  private ClientController controller;
 
   private ScheduledExecutorService executor;
-
-  // GameState Enum
-  public enum GameState {
-    MENU,
-    LOBBY,
-    IN_GAME
-  }
-
-  private GameState currentState;
-
+  
   public ClientScreen() {
     JFrame frame = new JFrame("Client");
     cardLayout = new CardLayout();
@@ -50,12 +42,14 @@ public class ClientScreen extends JPanel implements ActionListener {
     this.executor = Executors.newSingleThreadScheduledExecutor();
     this.executor.scheduleAtFixedRate(mainPanel::repaint, 0, 1000 / 60, TimeUnit.MILLISECONDS);
 
-    // Initialize GameState
-    this.currentState = GameState.MENU;
   }
 
-  public void setPacketManager(ClientPacketManager pm) {
-    this.pm = pm;
+  public void setController(ClientController controller) {
+    this.controller = controller;
+  }
+
+  public ClientController getController() {
+    return controller;
   }
 
   public CardLayout getCardLayout() {
@@ -64,29 +58,6 @@ public class ClientScreen extends JPanel implements ActionListener {
 
   public void showScreen(String screen) {
     cardLayout.show(mainPanel, screen);
-  }
-
-  public ClientPacketManager getPacketManager() {
-    return pm;
-  }
-
-  public GameState getCurrentState() {
-    return currentState;
-  }
-
-  public void setCurrentState(GameState state) {
-    this.currentState = state;
-    switch (state) {
-      case MENU:
-        showScreen("menuScreen");
-        break;
-      case LOBBY:
-        showScreen("lobbyScreen");
-        break;
-      case IN_GAME:
-        showScreen("gameScreen");
-        break;
-    }
   }
 
   public Dimension getPreferredSize() {

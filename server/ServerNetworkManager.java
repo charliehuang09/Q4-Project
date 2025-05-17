@@ -12,9 +12,6 @@ import network.packets.TeamSelectionPacket;
 import network.packets.ReadyUpPacket;
 import struct.MyArrayList;
 import network.packets.JoinRequestPacket;
-import model.Team;
-import struct.MyHashMap;
-import network.packets.SwitchStatePacket;
 
 public class ServerNetworkManager {
   public static final int MAX_CONNECTIONS = 4;
@@ -25,10 +22,7 @@ public class ServerNetworkManager {
   private MyArrayList<IndividualPacketManager> connectionManagers;
   private MyArrayList<String> clientIps;
 
-  private ServerScreen screen;
-  private GameState gameState = GameState.LOBBY;
-  private MyHashMap<Integer, Team> playerTeams = new MyHashMap<>();
-  private MyHashMap<Integer, Boolean> playerReadyStatus = new MyHashMap<>();
+  private ServerController controller;
 
   public ServerNetworkManager() {
     executor = Executors.newFixedThreadPool(MAX_CONNECTIONS);
@@ -36,17 +30,12 @@ public class ServerNetworkManager {
     clientIps = new MyArrayList<>();
   }
 
-  public void setScreen(ServerScreen screen) {
-    this.screen = screen;
+  public void setController(ServerController controller) {
+    this.controller = controller;
   }
 
   public void broadcast(Packet packet) {
     connectionManagers.forEach(ipm -> ipm.sendPacket(packet));
-  }
-
-  private enum GameState {
-    LOBBY,
-    IN_GAME
   }
 
   public void onReceive(Packet packet, int playerId) {
@@ -57,37 +46,12 @@ public class ServerNetworkManager {
     } else if (packet instanceof TeamSelectionPacket tsp) {
       System.out.println("[server:network] Team selected: " + tsp.getTeam());
 
-      if (gameState == GameState.LOBBY) {
-        Team team = Team.valueOf(tsp.getTeam().toUpperCase());
-        playerTeams.put(playerId, team);
-        System.out.println("[server:network] Player " + playerId + " selected team " + tsp.getTeam());
-      }
+      controller.handleTeamSelection(playerId, tsp.getTeam());
     } else if (packet instanceof ReadyUpPacket rup) {
       System.out.println("[server:network] Ready status: " + rup.isReady());
 
-      if (gameState == GameState.LOBBY) {
-        playerReadyStatus.put(playerId, rup.isReady());
-        System.out.println("[server:network] Player " + playerId + " is ready: " + rup.isReady());
-
-        boolean allReady = true;
-        for (Integer key : playerReadyStatus.keySet()) {
-          if (!playerReadyStatus.get(key)) {
-            allReady = false;
-            break;
-          }
-        }
-
-        if (allReady) {
-          gameState = GameState.IN_GAME;
-          
-          // Broadcast SwitchStatePacket to all clients
-          SwitchStatePacket switchStatePacket = new SwitchStatePacket("IN_GAME");
-          broadcast(switchStatePacket);
-
-          System.out.println("[server:network] All players are ready. Starting the game!");
-        }
-      }
-    } else if (packet instanceof UpdatePosPacket upp) {
+      controller.handleReadyStatus(playerId, rup.isReady());
+    } else if (packet instanceof @SuppressWarnings("unused") UpdatePosPacket upp) {
       
     }
   }
@@ -101,7 +65,7 @@ public class ServerNetworkManager {
   public void removeConnection(IndividualPacketManager ipm) {
     System.out.println("[server:network] Client disconnected: " + ipm.socket.getInetAddress().getHostAddress());
     clientIps.remove(ipm.socket.getInetAddress().getHostAddress());
-    screen.updateIPs(clientIps);
+    controller.updateIPs(clientIps);
     connectionManagers.remove(ipm);
   }
 
@@ -110,13 +74,12 @@ public class ServerNetworkManager {
       try {
         serverSocket = new ServerSocket(port);
 
-        gameState = GameState.LOBBY;
         while (true) {
           Socket newConnection = serverSocket.accept();
           IndividualPacketManager ipm = new IndividualPacketManager(lastConnectionId++, newConnection, this);
           System.out.println("[server:network] Client connected: " + newConnection.getInetAddress().getHostAddress());
           clientIps.add(newConnection.getInetAddress().getHostAddress());
-          screen.updateIPs(clientIps);
+          controller.updateIPs(clientIps);
 
           ipm.start();
           connectionManagers.add(ipm);

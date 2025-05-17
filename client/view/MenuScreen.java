@@ -1,9 +1,11 @@
 package client.view;
 
 import javax.swing.*;
+
+import client.ClientController;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 
 public class MenuScreen extends JPanel {
   private ClientScreen clientScreen;
@@ -22,11 +24,7 @@ public class MenuScreen extends JPanel {
   }
 
   public void attemptConnect(ActionEvent e) {
-    try {
-      clientScreen.getPacketManager().connect("localhost", 31415);
-      clientScreen.setCurrentState(ClientScreen.GameState.LOBBY);
-    } catch (IOException ex) {
-      System.out.println("Can't connect to server: " + ex.getMessage());
-    }
+    clientScreen.getController().connect("localhost", 31415);
+    clientScreen.getController().setCurrentState(ClientController.GameState.LOBBY);
   }
 }

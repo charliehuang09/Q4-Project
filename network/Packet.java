@@ -29,7 +29,7 @@ public abstract class Packet {
 
   public void writeBody(DataOutput out) throws IOException {}
 
-  public void write(DataOutput out) throws IOException {
+  public final void write(DataOutput out) throws IOException {
     writeHeader(out);
     writeBody(out);
   }

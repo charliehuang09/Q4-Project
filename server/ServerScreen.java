@@ -16,8 +16,7 @@ public class ServerScreen extends JPanel implements ActionListener {
   private static int WIDTH = 1000;
   private static int HEIGHT = 450;
 
-  private ServerNetworkManager pm;
-  private int mouseX, mouseY; // temp demo
+  private ServerController controller;
 
   private ScheduledExecutorService executor;
 
@@ -42,13 +41,8 @@ public class ServerScreen extends JPanel implements ActionListener {
     this.executor.scheduleAtFixedRate(this::repaint, 0, 1000 / 20, TimeUnit.MILLISECONDS);
   }
 
-  public void setPacketManager(ServerNetworkManager pm) {
-    this.pm = pm;
-  }
-
-  public void setMousePos(int mouseX, int mouseY) {
-    this.mouseX = mouseX;
-    this.mouseY = mouseY;
+  public void setController(ServerController controller) {
+    this.controller = controller;
   }
 
   public void setText(String text) {
@@ -71,7 +65,6 @@ public class ServerScreen extends JPanel implements ActionListener {
   @Override
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
-    g.fillOval(mouseX - 3, mouseY - 3, 6, 6);
   }
 
   @Override
