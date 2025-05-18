@@ -18,7 +18,8 @@ public class Platform extends Sprite {
 
   @Override
   public void draw(Graphics g) {
-    g.drawRect(
+    g.setColor(Color.BLACK);
+    g.fillRect(
         (int) (body.state.x - (body.width / 2)),
         (int) (body.state.y - (body.height / 2)),
         (int) body.width,
