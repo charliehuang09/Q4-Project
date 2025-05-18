@@ -35,7 +35,7 @@ public class ClientScreen extends JPanel implements ActionListener {
   private void update() {
     for (Sprite sprite : sprites) {
       sprite.applyForce(0, 0.1f);
-      sprite.applyDrag(0.99f);
+      sprite.applyDrag(0.95f);
     }
     for (Sprite sprite : sprites) {
       sprite.update(sprites);
