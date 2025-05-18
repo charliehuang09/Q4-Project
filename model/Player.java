@@ -47,14 +47,11 @@ public class Player extends Sprite {
 
   @Override
   public void update(ArrayList<Sprite> sprites) {
-    System.out.println("state_xvel " + body.state.x_vel);
-    System.out.println("state_yvel " + body.state.y_vel);
     boolean x_collides = false;
     boolean y_collides = false;
     try {
       for (Sprite sprite : sprites) {
         if (sprite == this) {
-          System.out.println("Myself");
           continue;
         }
         if (Collision.isColliding((Sprite) this.cloneWithOffset(body.state.x_vel, 0), sprite)) {
