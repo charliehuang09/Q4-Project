@@ -1,8 +1,8 @@
 package client.view;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import javax.swing.*;
 
 public class LobbyScreen extends JPanel {
   private ClientScreen clientScreen;
@@ -27,6 +27,7 @@ public class LobbyScreen extends JPanel {
 
     JButton blueTeamButton = new JButton("Join Blue Team");
     blueTeamButton.addActionListener(e -> joinTeam("Blue"));
+    // <<<<<<< HEAD
     blueTeamButton.setBounds(200, 150, 200, 50);
     this.add(blueTeamButton);
 
@@ -34,6 +35,15 @@ public class LobbyScreen extends JPanel {
     redTeamButton.addActionListener(e -> joinTeam("Red"));
     redTeamButton.setBounds(600, 150, 200, 50);
     this.add(redTeamButton);
+    // =======
+    //     centerPanel.add(blueTeamButton);
+    //
+    //     JButton redTeamButton = new JButton("Join Red Team");
+    //     redTeamButton.addActionListener(e -> joinTeam("Red"));
+    //     centerPanel.add(redTeamButton);
+    //
+    //     this.add(centerPanel, BorderLayout.CENTER);
+    // >>>>>>> 712d93b (fix error)
 
     // Ready Button
     readyButton = new JButton("Ready");
