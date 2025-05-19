@@ -1,4 +1,5 @@
 package game;
+
 import java.awt.Graphics;
 import model.Platform;
 import model.Player;
@@ -19,13 +20,13 @@ public class Game {
     this.sprites.add(new Platform(100, 200, 1000, 10));
   }
 
-  public void update() {
+  public void update(float dt) {
     for (Sprite sprite : sprites) {
       sprite.applyForce(0, 0.1f);
       sprite.applyDrag(0.95f);
     }
     for (Sprite sprite : sprites) {
-      sprite.update(sprites);
+      sprite.update(sprites, dt);
     }
   }
 

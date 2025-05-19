@@ -1,7 +1,6 @@
 package model;
 
 import java.awt.*;
-
 import struct.MyArrayList;
 
 public class Platform extends Sprite {
@@ -38,7 +37,7 @@ public class Platform extends Sprite {
   }
 
   @Override
-  public void update(MyArrayList<Sprite> sprites) {}
+  public void update(MyArrayList<Sprite> sprites, float dt) {}
 
   @Override
   public boolean isColliding(Sprite sprite) {

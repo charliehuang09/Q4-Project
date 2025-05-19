@@ -1,15 +1,15 @@
 package client.view;
 
-import javax.swing.*;
+import game.Game;
+import java.awt.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.awt.*;
-
-import game.Game;
+import javax.swing.*;
 
 public class GameScreen extends JPanel {
-  @SuppressWarnings("unused") private ClientScreen clientScreen;
+  @SuppressWarnings("unused")
+  private ClientScreen clientScreen;
 
   private Game game;
 
@@ -24,7 +24,7 @@ public class GameScreen extends JPanel {
   }
 
   private void update() {
-    game.update();
+    game.update(1.0f);
     repaint();
   }
 
