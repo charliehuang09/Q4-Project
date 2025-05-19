@@ -5,8 +5,10 @@ public class RectangleRigid {
   float width;
   float height;
 
-  public RectangleRigid(float x, float y) {
+  public RectangleRigid(float x, float y, float width, float height) {
     this.state = new State(x, y, 0, 0, 1);
+    this.width = width;
+    this.height = height;
   }
 
   public float rightX() {
