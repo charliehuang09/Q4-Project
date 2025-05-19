@@ -16,7 +16,7 @@ public class ServerScreen extends JPanel implements ActionListener {
   private static int WIDTH = 1000;
   private static int HEIGHT = 450;
 
-  private ServerController controller;
+  @SuppressWarnings("unused") private ServerController controller;
 
   private ScheduledExecutorService executor;
 

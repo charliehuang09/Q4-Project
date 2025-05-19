@@ -12,33 +12,34 @@ public class LobbyScreen extends JPanel {
 
   public LobbyScreen(ClientScreen clientScreen) {
     this.clientScreen = clientScreen;
-    this.setLayout(new BorderLayout());
+    this.setLayout(null);
 
     JLabel titleLabel = new JLabel("Lobby", SwingConstants.CENTER);
     titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-    this.add(titleLabel, BorderLayout.NORTH);
-
-    JPanel centerPanel = new JPanel();
-    centerPanel.setLayout(new GridLayout(2, 1));
+    titleLabel.setBounds(0, 20, 1000, 50);
+    this.add(titleLabel);
 
     // Team Selection
     teamLabel = new JLabel("Team: None", SwingConstants.CENTER);
-    centerPanel.add(teamLabel);
+    teamLabel.setFont(new Font("Arial", Font.PLAIN, 18));
+    teamLabel.setBounds(0, 80, 1000, 50);
+    this.add(teamLabel);
 
     JButton blueTeamButton = new JButton("Join Blue Team");
-    blueTeamButton.addActionListener(_ -> joinTeam("Blue"));
-    centerPanel.add(blueTeamButton);
+    blueTeamButton.addActionListener(e -> joinTeam("Blue"));
+    blueTeamButton.setBounds(200, 150, 200, 50);
+    this.add(blueTeamButton);
 
     JButton redTeamButton = new JButton("Join Red Team");
-    redTeamButton.addActionListener(_ -> joinTeam("Red"));
-    centerPanel.add(redTeamButton);
-
-    this.add(centerPanel, BorderLayout.CENTER);
+    redTeamButton.addActionListener(e -> joinTeam("Red"));
+    redTeamButton.setBounds(600, 150, 200, 50);
+    this.add(redTeamButton);
 
     // Ready Button
     readyButton = new JButton("Ready");
     readyButton.addActionListener(this::toggleReady);
-    this.add(readyButton, BorderLayout.SOUTH);
+    readyButton.setBounds(400, 250, 200, 50);
+    this.add(readyButton);
 
     isReady = false;
   }

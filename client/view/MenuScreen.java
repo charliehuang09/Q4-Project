@@ -12,15 +12,17 @@ public class MenuScreen extends JPanel {
 
   public MenuScreen(ClientScreen clientScreen) {
     this.clientScreen = clientScreen;
-    this.setLayout(new BorderLayout());
+    this.setLayout(null);
 
-    JLabel titleLabel = new JLabel("Game Menu", SwingConstants.CENTER);
-    titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-    this.add(titleLabel, BorderLayout.NORTH);
+    JLabel titleLabel = new JLabel("Bonk", SwingConstants.CENTER);
+    titleLabel.setFont(new Font("Arial", Font.BOLD, 50));
+    titleLabel.setBounds(0, 20, 1000, 50);
+    this.add(titleLabel);
 
     JButton joinButton = new JButton("Join");
     joinButton.addActionListener(this::attemptConnect);
-    this.add(joinButton, BorderLayout.CENTER);
+    joinButton.setBounds(400, 200, 200, 50);
+    this.add(joinButton);
   }
 
   public void attemptConnect(ActionEvent e) {
