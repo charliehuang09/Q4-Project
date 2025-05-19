@@ -31,4 +31,28 @@ public class Collision {
   public static boolean isColliding(RectangleRigid rectangle, CircleRigid circle) {
     return isColliding(circle, rectangle);
   }
+
+  public static boolean isColliding(Sprite sprite1, Sprite sprite2) {
+    if (sprite1 instanceof Player && sprite2 instanceof Player) {
+      Player player1 = (Player) sprite1;
+      Player player2 = (Player) sprite2;
+      return isColliding(player1.body, player2.body);
+    }
+    if (sprite1 instanceof Player && sprite2 instanceof Platform) {
+      Player player = (Player) sprite1;
+      Platform platform = (Platform) sprite2;
+      return isColliding(player.body, platform.body);
+    }
+    if (sprite1 instanceof Platform && sprite2 instanceof Player) {
+      Platform platform = (Platform) sprite1;
+      Player player = (Player) sprite2;
+      return isColliding(platform.body, player.body);
+    }
+    if (sprite1 instanceof Platform && sprite2 instanceof Platform) {
+      Platform platfrom1 = (Platform) sprite1;
+      Platform platform2 = (Platform) sprite2;
+      return isColliding(platfrom1.body, platform2.body);
+    }
+    return false;
+  }
 }

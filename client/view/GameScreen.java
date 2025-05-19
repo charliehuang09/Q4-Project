@@ -6,21 +6,17 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.awt.*;
 
-import model.Player;
-import model.Sprite;
-import model.Team;
-import struct.MyArrayList;
-import render.Render;
+import game.Game;
 
 public class GameScreen extends JPanel {
   @SuppressWarnings("unused") private ClientScreen clientScreen;
-  private MyArrayList<Sprite> sprites;
+
+  private Game game;
 
   public GameScreen(ClientScreen clientScreen) {
     this.clientScreen = clientScreen;
-    
-    this.sprites = new MyArrayList<Sprite>();
-    this.sprites.add(new Player(100, 100, Team.BLUE));
+
+    game = new Game();
 
     this.setPreferredSize(new Dimension(1000, 450));
     ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
@@ -28,19 +24,13 @@ public class GameScreen extends JPanel {
   }
 
   private void update() {
-    for (Sprite sprite : this.sprites) {
-      sprite.applyForce(0, 0.1f);
-      sprite.applyDrag(0.9f);
-    }
-    for (Sprite sprite : this.sprites) {
-      sprite.update();
-    }
+    game.update();
     repaint();
   }
 
   @Override
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
-    Render.draw(g, sprites);
+    game.draw(g);
   }
 }
