@@ -2,26 +2,18 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import javax.swing.*;
-import model.Platform;
-import model.Player;
-import model.Sprite;
-import model.Team;
 
 public class ClientScreen extends JPanel implements ActionListener {
-  ArrayList<Sprite> sprites;
+  Game game;
 
   public ClientScreen() {
-
-    this.sprites = new ArrayList<Sprite>();
-    this.sprites.add(new Player(100, 100, Team.BLUE));
-    this.sprites.add(new Platform(100, 200, 1000, 10));
+    game = new Game();
     Thread thread =
         new Thread(
             () -> {
               while (true) {
-                this.update();
+                game.update();
                 try {
                   Thread.sleep(50);
                 } catch (InterruptedException e) {
@@ -32,17 +24,6 @@ public class ClientScreen extends JPanel implements ActionListener {
     thread.start();
   }
 
-  private void update() {
-    for (Sprite sprite : sprites) {
-      sprite.applyForce(0, 0.1f);
-      sprite.applyDrag(0.95f);
-    }
-    for (Sprite sprite : sprites) {
-      sprite.update(sprites);
-    }
-    repaint();
-  }
-
   public Dimension getPreferredSize() {
     return new Dimension(1000, 450);
   }
@@ -50,9 +31,7 @@ public class ClientScreen extends JPanel implements ActionListener {
   @Override
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
-    for (int i = 0; i < sprites.size(); i++) {
-      Render.draw(g, sprites);
-    }
+    game.draw(g);
   }
 
   @Override
