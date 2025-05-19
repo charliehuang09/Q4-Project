@@ -35,17 +35,6 @@ public class LobbyScreen extends JPanel {
     redTeamButton.addActionListener(e -> joinTeam("Red"));
     redTeamButton.setBounds(600, 150, 200, 50);
     this.add(redTeamButton);
-    // =======
-    //     centerPanel.add(blueTeamButton);
-    //
-    //     JButton redTeamButton = new JButton("Join Red Team");
-    //     redTeamButton.addActionListener(e -> joinTeam("Red"));
-    //     centerPanel.add(redTeamButton);
-    //
-    //     this.add(centerPanel, BorderLayout.CENTER);
-    // >>>>>>> 712d93b (fix error)
-
-    // Ready Button
     readyButton = new JButton("Ready");
     readyButton.addActionListener(this::toggleReady);
     readyButton.setBounds(400, 250, 200, 50);
