@@ -28,7 +28,12 @@ public class Player extends Sprite {
 
   @Override
   public void draw(Graphics g) {
-    g.drawOval(
+    if (team == Team.RED) {
+      g.setColor(Color.RED);
+    } else {
+      g.setColor(Color.BLUE);
+    }
+    g.fillOval(
         (int) (body.state.x - (RADIUS)),
         (int) (body.state.y - (RADIUS)),
         (int) RADIUS,
