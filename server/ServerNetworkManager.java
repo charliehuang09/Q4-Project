@@ -3,47 +3,59 @@ package server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import network.Packet;
-import network.PacketManager;
 import network.packets.UpdatePosPacket;
+import network.packets.TeamSelectionPacket;
+import network.packets.ReadyUpPacket;
+import struct.MyArrayList;
 import network.packets.JoinRequestPacket;
 
-public class ServerPacketManager extends PacketManager {
+public class ServerNetworkManager {
   public static final int MAX_CONNECTIONS = 4;
 
   private ServerSocket serverSocket;
   private ExecutorService executor;
   private int lastConnectionId = 0;
-  private ArrayList<IndividualPacketManager> connectionManagers;
-  private ArrayList<String> clientIps;
+  private MyArrayList<IndividualPacketManager> connectionManagers;
+  private MyArrayList<String> clientIps;
 
-  private ServerScreen screen;
+  private ServerController controller;
 
-  public ServerPacketManager() {
+  public ServerNetworkManager() {
     executor = Executors.newFixedThreadPool(MAX_CONNECTIONS);
-    connectionManagers = new ArrayList<>();
-    clientIps = new ArrayList<>();
+    connectionManagers = new MyArrayList<>();
+    clientIps = new MyArrayList<>();
   }
 
-  public void setScreen(ServerScreen screen) {
-    this.screen = screen;
+  public void setController(ServerController controller) {
+    this.controller = controller;
   }
 
-  @Override
-  public void onReceive(Packet packet) {
+  public void broadcast(Packet packet) {
+    connectionManagers.forEach(ipm -> ipm.sendPacket(packet));
+  }
+
+  public void onReceive(Packet packet, int playerId) {
     System.out.println("[server:network] Received " + packet.getId());
+
     if (packet instanceof JoinRequestPacket jrp) {
       System.out.println("[server:network] Client joined: " + jrp.clientName);
-    } else if (packet instanceof UpdatePosPacket upp) {
-      screen.setMousePos((int) upp.x, (int) upp.y);
+    } else if (packet instanceof TeamSelectionPacket tsp) {
+      System.out.println("[server:network] Team selected: " + tsp.getTeam());
+
+      controller.handleTeamSelection(playerId, tsp.getTeam());
+    } else if (packet instanceof ReadyUpPacket rup) {
+      System.out.println("[server:network] Ready status: " + rup.isReady());
+
+      controller.handleReadyStatus(playerId, rup.isReady());
+    } else if (packet instanceof @SuppressWarnings("unused") UpdatePosPacket upp) {
+      
     }
   }
 
-  @Override
   public void disconnect() {
     for (IndividualPacketManager ipm : connectionManagers) {
       ipm.disconnect();
@@ -53,7 +65,7 @@ public class ServerPacketManager extends PacketManager {
   public void removeConnection(IndividualPacketManager ipm) {
     System.out.println("[server:network] Client disconnected: " + ipm.socket.getInetAddress().getHostAddress());
     clientIps.remove(ipm.socket.getInetAddress().getHostAddress());
-    screen.updateIPs(clientIps);
+    controller.updateIPs(clientIps);
     connectionManagers.remove(ipm);
   }
 
@@ -61,13 +73,13 @@ public class ServerPacketManager extends PacketManager {
     executor.submit(() -> {
       try {
         serverSocket = new ServerSocket(port);
-  
+
         while (true) {
           Socket newConnection = serverSocket.accept();
           IndividualPacketManager ipm = new IndividualPacketManager(lastConnectionId++, newConnection, this);
           System.out.println("[server:network] Client connected: " + newConnection.getInetAddress().getHostAddress());
           clientIps.add(newConnection.getInetAddress().getHostAddress());
-          screen.updateIPs(clientIps);
+          controller.updateIPs(clientIps);
 
           ipm.start();
           connectionManagers.add(ipm);

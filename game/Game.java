@@ -1,20 +1,21 @@
+package game;
 import java.awt.Graphics;
-import java.util.ArrayList;
 import model.Platform;
 import model.Player;
 import model.Sprite;
 import model.Team;
+import struct.MyArrayList;
 
 public class Game {
-  ArrayList<Sprite> sprites;
+  MyArrayList<Sprite> sprites;
 
   public Game() {
     initGame();
   }
 
   private void initGame() {
-    this.sprites = new ArrayList<Sprite>();
-    this.sprites.add(new Player(100, 100, Team.BLUE));
+    this.sprites = new MyArrayList<Sprite>();
+    this.sprites.add(new Player(100, 80, Team.BLUE));
     this.sprites.add(new Platform(100, 200, 1000, 10));
   }
 

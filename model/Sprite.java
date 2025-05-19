@@ -1,7 +1,8 @@
 package model;
 
 import java.awt.*;
-import java.util.ArrayList;
+
+import struct.MyArrayList;
 
 public abstract class Sprite {
   public abstract boolean canMove();
@@ -12,7 +13,7 @@ public abstract class Sprite {
 
   public abstract void applyForce(float x, float y);
 
-  public abstract void update(ArrayList<Sprite> sprites);
+  public abstract void update(MyArrayList<Sprite> sprites);
 
   public abstract boolean isColliding(Sprite sprite);
 

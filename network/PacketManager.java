@@ -3,15 +3,16 @@ package network;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
+
+import struct.MyHashMap;
 
 public abstract class PacketManager {
 
   // for registering the readPacket() function per packet
-  private HashMap<Byte, Class<? extends Packet>> packetMap;
+  private MyHashMap<Byte, Class<? extends Packet>> packetMap;
 
   public PacketManager() {
-    this.packetMap = new HashMap<Byte, Class<? extends Packet>>();
+    this.packetMap = new MyHashMap<Byte, Class<? extends Packet>>();
   }
 
   public void registerPacket(Class<? extends Packet> packetClass) {
@@ -24,8 +25,10 @@ public abstract class PacketManager {
   }
 
   public Packet receivePacket(DataInputStream in) throws IOException {
+    System.out.println("[network] Receiving packet...");
     byte id = in.readByte();
     int timestamp = in.readInt();
+    System.out.println("[network] Received packet with ID: " + id + " and timestamp: " + timestamp);
 
     try {
       Packet packet = packetMap.get(id).getDeclaredConstructor().newInstance();

@@ -9,50 +9,55 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.*;
 
-import client.ClientPacketManager;
+import client.ClientController;
 
 public class ClientScreen extends JPanel implements ActionListener {
-  private ClientPacketManager pm;
   private JPanel mainPanel;
   private CardLayout cardLayout;
+  
+  private ClientController controller;
 
   private ScheduledExecutorService executor;
-
+  
   public ClientScreen() {
     JFrame frame = new JFrame("Client");
     cardLayout = new CardLayout();
     mainPanel = new JPanel(cardLayout);
 
     // Start Screen
-    StartScreen startScreen = new StartScreen(this);
+    MenuScreen menuScreen = new MenuScreen(this);
+    LobbyScreen lobbyScreen = new LobbyScreen(this);
     GameScreen gameScreen = new GameScreen(this);
 
-    mainPanel.add(startScreen, "startScreen");
+    mainPanel.add(menuScreen, "menuScreen");
+    mainPanel.add(lobbyScreen, "lobbyScreen");
     mainPanel.add(gameScreen, "gameScreen");
     frame.add(mainPanel);
 
-    showScreen("startScreen");
+    showScreen("menuScreen"); // Initial screen remains the same
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.pack();
     frame.setVisible(true);
 
     this.executor = Executors.newSingleThreadScheduledExecutor();
-    this.executor.scheduleAtFixedRate(mainPanel::repaint, 0, 1000 / 20, TimeUnit.MILLISECONDS);
+    this.executor.scheduleAtFixedRate(mainPanel::repaint, 0, 1000 / 60, TimeUnit.MILLISECONDS);
+
   }
 
-  public void setPacketManager(ClientPacketManager pm) {
-    this.pm = pm;
+  public void setController(ClientController controller) {
+    this.controller = controller;
+  }
+
+  public ClientController getController() {
+    return controller;
   }
 
   public CardLayout getCardLayout() {
     return cardLayout;
   }
-  
+
   public void showScreen(String screen) {
     cardLayout.show(mainPanel, screen);
-  }
-
-  public ClientPacketManager getPacketManager() {
-    return pm;
   }
 
   public Dimension getPreferredSize() {
@@ -60,5 +65,6 @@ public class ClientScreen extends JPanel implements ActionListener {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {}
+  public void actionPerformed(ActionEvent e) {
+  }
 }

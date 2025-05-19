@@ -4,19 +4,19 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.*;
 
+import struct.MyArrayList;
+
 public class ServerScreen extends JPanel implements ActionListener {
   private static int WIDTH = 1000;
   private static int HEIGHT = 450;
 
-  private ServerPacketManager pm;
-  private int mouseX, mouseY; // temp demo
+  private ServerController controller;
 
   private ScheduledExecutorService executor;
 
@@ -41,20 +41,15 @@ public class ServerScreen extends JPanel implements ActionListener {
     this.executor.scheduleAtFixedRate(this::repaint, 0, 1000 / 20, TimeUnit.MILLISECONDS);
   }
 
-  public void setPacketManager(ServerPacketManager pm) {
-    this.pm = pm;
-  }
-
-  public void setMousePos(int mouseX, int mouseY) {
-    this.mouseX = mouseX;
-    this.mouseY = mouseY;
+  public void setController(ServerController controller) {
+    this.controller = controller;
   }
 
   public void setText(String text) {
     textArea.setText(text);
   }
 
-  public void updateIPs(ArrayList<String> ips) {
+  public void updateIPs(MyArrayList<String> ips) {
     StringBuilder sb = new StringBuilder();
     sb.append("Connected clients:\n");
     for (String ip : ips) {
@@ -70,9 +65,9 @@ public class ServerScreen extends JPanel implements ActionListener {
   @Override
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
-    g.fillOval(mouseX - 3, mouseY - 3, 6, 6);
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {}
+  public void actionPerformed(ActionEvent e) {
+  }
 }

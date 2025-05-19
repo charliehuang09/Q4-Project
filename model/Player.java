@@ -1,7 +1,8 @@
 package model;
 
 import java.awt.*;
-import java.util.ArrayList;
+
+import struct.MyArrayList;
 
 public class Player extends Sprite {
   static final float RADIUS = 30;
@@ -46,7 +47,7 @@ public class Player extends Sprite {
   }
 
   @Override
-  public void update(ArrayList<Sprite> sprites) {
+  public void update(MyArrayList<Sprite> sprites) {
     boolean x_collides = false;
     boolean y_collides = false;
     try {

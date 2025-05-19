@@ -7,6 +7,8 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 public class JoinRequestPacket extends Packet {
+  // Note: Currently unused
+
   public String clientName;
 
   public JoinRequestPacket() {
@@ -28,7 +30,7 @@ public class JoinRequestPacket extends Packet {
   }
 
   @Override
-  public void write(DataOutput output) throws IOException {
+  public void writeBody(DataOutput output) throws IOException {
     output.writeUTF(clientName);
   }
 }
