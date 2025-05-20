@@ -3,7 +3,7 @@ package model;
 import java.awt.Graphics;
 
 class Graple {
-  private float MAX_DISTANCE = 10.0f;
+  private float MAX_DISTANCE = 500.0f;
   public float grapleLength;
   public DeathBall deathBall;
   public Player player;
@@ -35,7 +35,7 @@ class Graple {
     float ty = uy * grapleLength;
     float vx = x - tx;
     float vy = y - ty;
-    deathBall.applyForce(vx, vy);
+    deathBall.applyForce(-vx * 0.9f, -vy * 0.9f);
   }
 
   public void update(float dt, boolean on) {

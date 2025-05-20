@@ -81,6 +81,7 @@ public class Player extends Sprite {
     }
     if (!x_collides) body.state.x += body.state.x_vel * dt;
     if (!y_collides) body.state.y += body.state.y_vel * dt;
+    graple.update(dt, true);
   }
 
   @Override
