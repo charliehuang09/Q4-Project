@@ -3,23 +3,19 @@ package model;
 import java.awt.*;
 import struct.MyArrayList;
 
-public class Player extends Sprite {
+public class DeathBall extends Sprite {
   static final float RADIUS = 30;
-  private Team team;
   public CircleRigid body;
-  public Graple graple;
 
-  public Player(float x, float y, Team team, DeathBall deathBall) {
-    this.team = team;
+  public DeathBall(float x, float y) {
     this.body = new CircleRigid(x, y, RADIUS);
-    this.graple = new Graple(this, deathBall);
   }
 
-  public Player cloneWithOffset(float x_offset, float y_offset) {
-    Player newPlayer = new Player(body.state.x, body.state.y, team, null);
-    newPlayer.body.state.x_vel = body.state.x_vel + x_offset;
-    newPlayer.body.state.y_vel = body.state.y_vel + y_offset;
-    return newPlayer;
+  public DeathBall cloneWithOffset(float x_offset, float y_offset) {
+    DeathBall newDeathBall = new DeathBall(body.state.x, body.state.y);
+    newDeathBall.body.state.x_vel = body.state.x_vel + x_offset;
+    newDeathBall.body.state.y_vel = body.state.y_vel + y_offset;
+    return newDeathBall;
   }
 
   @Override
@@ -29,17 +25,12 @@ public class Player extends Sprite {
 
   @Override
   public void draw(Graphics g) {
-    if (team == Team.RED) {
-      g.setColor(Color.RED);
-    } else {
-      g.setColor(Color.BLUE);
-    }
+    g.setColor(Color.BLACK);
     g.fillOval(
         (int) (body.state.x - (RADIUS)),
         (int) (body.state.y - (RADIUS)),
         (int) RADIUS,
         (int) RADIUS);
-    graple.draw(g);
   }
 
   @Override
@@ -59,7 +50,7 @@ public class Player extends Sprite {
     boolean y_collides = false;
     try {
       for (Sprite sprite : sprites) {
-        if (sprite == this) {
+        if (!(sprite instanceof Platform)) {
           continue;
         }
         if (Collision.isColliding((Sprite) this.cloneWithOffset(body.state.x_vel, 0), sprite)) {
