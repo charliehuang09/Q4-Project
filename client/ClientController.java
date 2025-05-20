@@ -2,6 +2,7 @@ package client;
 
 import client.view.ClientScreen;
 import network.Packet;
+import network.packets.JoinRequestPacket;
 import network.packets.ReadyUpPacket;
 import network.packets.SwitchStatePacket;
 import network.packets.TeamSelectionPacket;
@@ -14,6 +15,7 @@ public class ClientController {
     LOBBY,
     IN_GAME
   }
+
   private ClientPacketManager packetManager;
   private ClientScreen screen;
 
@@ -25,26 +27,22 @@ public class ClientController {
     this.screen.setController(this);
   }
 
-  // TODO: put this back in NetworkManager
-  public void handlePacket(Packet packet) {
-    if (packet instanceof SwitchStatePacket ssp) {
-      handleSwitchStatePacket(ssp);
-    } else if (packet instanceof TeamSelectionPacket tsp) {
-      handleTeamSelectionPacket(tsp);
-    } else {
-      System.out.println("[client:controller] Unknown packet type: " + packet.getClass().getName());
-    }
-  }
-
-  private void handleSwitchStatePacket(SwitchStatePacket packet) {
-    if ("IN_GAME".equals(packet.getNewState())) {
+  public void handleSwitchState(SwitchStatePacket packet) {
+    if (packet.getNewState().equals("IN_GAME")) {
       setCurrentState(GameState.IN_GAME);
       System.out.println("[client:controller] Switched to IN_GAME state.");
     }
   }
 
-  private void handleTeamSelectionPacket(TeamSelectionPacket packet) {
+  public void handleTeamSelection(TeamSelectionPacket packet) {
     System.out.println("[client:controller] Team selected: " + packet.getTeam());
+    // TODO: store team
+  }
+
+  public void attemptConnect() {
+    connect("localhost", 31415);
+    sendPacket(new JoinRequestPacket("PlayerName")); // TODO: get player name from input
+    setCurrentState(ClientController.GameState.LOBBY);
   }
 
   public void joinTeam(String team) {
