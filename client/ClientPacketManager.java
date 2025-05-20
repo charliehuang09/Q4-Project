@@ -33,9 +33,9 @@ public class ClientPacketManager extends PacketManager {
     System.out.println("[client:network] Received " + packet.getId());
 
     if (packet instanceof SwitchStatePacket ssp) {
-      controller.handleSwitchState(ssp);
+      controller.setCurrentState(ClientController.GameState.valueOf(ssp.getNewState()));
     } else if (packet instanceof TeamSelectionPacket tsp) {
-      controller.handleTeamSelection(tsp);
+      controller.selectTeam(tsp.getTeam());
     } else {
       System.out.println("[client:controller] Unknown packet type: " + packet.getClass().getName());
     }
@@ -67,6 +67,7 @@ public class ClientPacketManager extends PacketManager {
   public void disconnect() {
     try {
       System.out.println("[client:network] Disconnecting...");
+      controller.stopGame();
       controller.setCurrentState(ClientController.GameState.MENU);
       socket.close();
       executor.shutdownNow();

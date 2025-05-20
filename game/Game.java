@@ -16,6 +16,7 @@ public class Game {
   MyArrayList<Sprite> sprites;
 
   private ScheduledExecutorService executor;
+  private long time;
 
   public Game() {
     initGame();
@@ -26,25 +27,31 @@ public class Game {
   private void initGame() {
     this.player = new Player(100, 10, Team.BLUE);
     this.sprites = new MyArrayList<Sprite>();
-    this.sprites.add(new Platform(100, 200, 1000, 10)); // TODO: remove this later
+    this.sprites.add(new Platform(100, 200, 1000, 50)); // TODO: remove this later
   }
 
   public void start() {
-    executor.scheduleAtFixedRate(() -> this.update(0.1f), 0, 1000 / 60, TimeUnit.MILLISECONDS);
+    executor.scheduleAtFixedRate(this::update, 0, 1000 / 60, TimeUnit.MILLISECONDS);
   }
 
   public void stop() {
     executor.shutdown();
   }
 
-  public void update(float dt) {
-    for (Sprite sprite : sprites) {
-      sprite.applyForce(0, 0.1f);
-      sprite.applyDrag(0.95f);
+  public void update() {
+    if (time == 0) {
+      time = System.currentTimeMillis();
+      return;
     }
-    for (Sprite sprite : sprites) {
-      sprite.update(sprites, dt);
-    }
+
+    long ct = System.currentTimeMillis();
+    float dt = (float) (ct - time) / 1000f;
+    time = ct;
+
+    player.applyForce(0, 7000f * dt); // gravity
+    player.applyDrag(0.9f);
+
+    player.update(sprites, dt);
   }
 
   public void draw(Graphics g) {
