@@ -45,7 +45,7 @@ public class DeathBall extends Sprite {
   }
 
   @Override
-  public void update(MyArrayList<Sprite> sprites) {
+  public void update(MyArrayList<Sprite> sprites, float dt) {
     boolean x_collides = false;
     boolean y_collides = false;
     try {
@@ -53,14 +53,16 @@ public class DeathBall extends Sprite {
         if (!(sprite instanceof Platform)) {
           continue;
         }
-        if (Collision.isColliding((Sprite) this.cloneWithOffset(body.state.x_vel, 0), sprite)) {
+        if (Collision.isColliding(
+            (Sprite) this.cloneWithOffset(body.state.x_vel * dt, 0), sprite)) {
           body.state.x_vel *= -1;
-          body.state.x += body.state.x_vel;
+          body.state.x += body.state.x_vel * dt;
           x_collides = true;
         }
-        if (Collision.isColliding((Sprite) this.cloneWithOffset(0, body.state.y_vel), sprite)) {
+        if (Collision.isColliding(
+            (Sprite) this.cloneWithOffset(0, body.state.y_vel * dt), sprite)) {
           body.state.y_vel *= -1;
-          body.state.y += body.state.y_vel;
+          body.state.y += body.state.y_vel * dt;
           y_collides = true;
         }
         if (x_collides || y_collides) break;
@@ -68,8 +70,8 @@ public class DeathBall extends Sprite {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    if (!x_collides) body.state.x += body.state.x_vel;
-    if (!y_collides) body.state.y += body.state.y_vel;
+    if (!x_collides) body.state.x += body.state.x_vel * dt;
+    if (!y_collides) body.state.y += body.state.y_vel * dt;
   }
 
   @Override
