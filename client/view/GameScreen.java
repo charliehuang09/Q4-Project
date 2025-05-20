@@ -12,6 +12,7 @@ public class GameScreen extends JPanel {
   private ClientScreen clientScreen;
 
   private Game game;
+  private ScheduledExecutorService executor;
 
   public GameScreen(ClientScreen clientScreen) {
     this.clientScreen = clientScreen;
@@ -19,13 +20,9 @@ public class GameScreen extends JPanel {
     game = new Game();
 
     this.setPreferredSize(new Dimension(1000, 450));
-    ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-    executor.scheduleAtFixedRate(this::update, 0, 1000 / 60, TimeUnit.MILLISECONDS);
-  }
+    executor = Executors.newScheduledThreadPool(1);
 
-  private void update() {
-    game.update(1.0f);
-    repaint();
+    executor.scheduleAtFixedRate(this::repaint, 0, 1000 / 60, TimeUnit.MILLISECONDS);
   }
 
   @Override
