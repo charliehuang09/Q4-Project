@@ -1,6 +1,7 @@
 package game;
 
 import java.awt.Graphics;
+import model.DeathBall;
 import model.Platform;
 import model.Player;
 import model.Sprite;
@@ -16,8 +17,13 @@ public class Game {
 
   private void initGame() {
     this.sprites = new MyArrayList<Sprite>();
-    this.sprites.add(new Player(100, 80, Team.BLUE));
-    this.sprites.add(new Platform(100, 200, 1000, 10));
+    this.sprites.add(new DeathBall(300, 80));
+
+    // Player
+    this.sprites.add(new Player(100, 80, Team.BLUE, (DeathBall) sprites.get(0)));
+
+    // Platform
+    this.sprites.add(new Platform(500, 445, 1000, 10));
   }
 
   public void update(float dt) {
