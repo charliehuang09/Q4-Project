@@ -32,10 +32,12 @@ public class ClientPacketManager extends PacketManager {
   public void onReceive(Packet packet) {
     System.out.println("[client:network] Received " + packet.getId());
 
-    if (controller != null) {
-      controller.handlePacket(packet);
+    if (packet instanceof SwitchStatePacket ssp) {
+      controller.handleSwitchState(ssp);
+    } else if (packet instanceof TeamSelectionPacket tsp) {
+      controller.handleTeamSelection(tsp);
     } else {
-      System.out.println("[client:network] Controller is not set. Unable to handle packet.");
+      System.out.println("[client:controller] Unknown packet type: " + packet.getClass().getName());
     }
   }
 

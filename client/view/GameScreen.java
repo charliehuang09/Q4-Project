@@ -20,7 +20,7 @@ public class GameScreen extends JPanel {
 
     this.setPreferredSize(new Dimension(1000, 450));
     ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-    executor.scheduleAtFixedRate(this::update, 0, 50, TimeUnit.MILLISECONDS);
+    executor.scheduleAtFixedRate(this::update, 0, 1000 / 60, TimeUnit.MILLISECONDS);
   }
 
   private void update() {

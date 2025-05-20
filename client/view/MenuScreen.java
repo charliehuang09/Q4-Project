@@ -2,10 +2,7 @@ package client.view;
 
 import javax.swing.*;
 
-import client.ClientController;
-
 import java.awt.*;
-import java.awt.event.ActionEvent;
 
 public class MenuScreen extends JPanel {
   private ClientScreen clientScreen;
@@ -20,13 +17,8 @@ public class MenuScreen extends JPanel {
     this.add(titleLabel);
 
     JButton joinButton = new JButton("Join");
-    joinButton.addActionListener(this::attemptConnect);
+    joinButton.addActionListener(e -> clientScreen.getController().attemptConnect());
     joinButton.setBounds(400, 200, 200, 50);
     this.add(joinButton);
-  }
-
-  public void attemptConnect(ActionEvent e) {
-    clientScreen.getController().connect("localhost", 31415);
-    clientScreen.getController().setCurrentState(ClientController.GameState.LOBBY);
   }
 }

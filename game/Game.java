@@ -16,7 +16,7 @@ public class Game {
 
   private void initGame() {
     this.sprites = new MyArrayList<Sprite>();
-    this.sprites.add(new Player(100, 80, Team.BLUE));
+    this.sprites.add(new Player(100, 10, Team.BLUE));
     this.sprites.add(new Platform(100, 200, 1000, 10));
   }
 

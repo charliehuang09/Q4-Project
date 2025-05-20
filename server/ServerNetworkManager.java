@@ -43,9 +43,9 @@ public class ServerNetworkManager {
 
     if (packet instanceof JoinRequestPacket jrp) {
       System.out.println("[server:network] Client joined: " + jrp.clientName);
+      controller.onJoinRequest(playerId, jrp.clientName);
     } else if (packet instanceof TeamSelectionPacket tsp) {
       System.out.println("[server:network] Team selected: " + tsp.getTeam());
-
       controller.handleTeamSelection(playerId, tsp.getTeam());
     } else if (packet instanceof ReadyUpPacket rup) {
       System.out.println("[server:network] Ready status: " + rup.isReady());
@@ -65,6 +65,7 @@ public class ServerNetworkManager {
   public void removeConnection(IndividualPacketManager ipm) {
     System.out.println("[server:network] Client disconnected: " + ipm.socket.getInetAddress().getHostAddress());
     clientIps.remove(ipm.socket.getInetAddress().getHostAddress());
+    controller.onDisconnect(ipm.id);
     controller.updateIPs(clientIps);
     connectionManagers.remove(ipm);
   }

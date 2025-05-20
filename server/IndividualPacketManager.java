@@ -16,7 +16,7 @@ import network.packets.UpdatePosPacket;
 
 public class IndividualPacketManager extends PacketManager {
 
-  private int id;
+  protected int id;
   protected Socket socket;
   protected DataInputStream in;
   protected DataOutputStream out;
