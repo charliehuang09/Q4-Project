@@ -1,17 +1,18 @@
 package client.view;
 
-import javax.swing.*;
+import game.Game;
+import java.awt.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.awt.*;
-
-import game.Game;
+import javax.swing.*;
 
 public class GameScreen extends JPanel {
-  @SuppressWarnings("unused") private ClientScreen clientScreen;
+  @SuppressWarnings("unused")
+  private ClientScreen clientScreen;
 
   private Game game;
+  private ScheduledExecutorService executor;
 
   public GameScreen(ClientScreen clientScreen) {
     this.clientScreen = clientScreen;
@@ -19,13 +20,9 @@ public class GameScreen extends JPanel {
     game = new Game();
 
     this.setPreferredSize(new Dimension(1000, 450));
-    ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-    executor.scheduleAtFixedRate(this::update, 0, 1000 / 60, TimeUnit.MILLISECONDS);
-  }
+    executor = Executors.newScheduledThreadPool(1);
 
-  private void update() {
-    game.update();
-    repaint();
+    executor.scheduleAtFixedRate(this::repaint, 0, 1000 / 60, TimeUnit.MILLISECONDS);
   }
 
   @Override

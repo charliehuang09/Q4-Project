@@ -1,7 +1,6 @@
 package model;
 
 import java.awt.*;
-
 import struct.MyArrayList;
 
 public abstract class Sprite {
@@ -13,7 +12,7 @@ public abstract class Sprite {
 
   public abstract void applyForce(float x, float y);
 
-  public abstract void update(MyArrayList<Sprite> sprites);
+  public abstract void update(MyArrayList<Sprite> sprites, float dt);
 
   public abstract boolean isColliding(Sprite sprite);
 

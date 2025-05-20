@@ -27,7 +27,6 @@ public class LobbyScreen extends JPanel {
 
     JButton blueTeamButton = new JButton("Join Blue Team");
     blueTeamButton.addActionListener(e -> joinTeam("Blue"));
-    // <<<<<<< HEAD
     blueTeamButton.setBounds(200, 150, 200, 50);
     this.add(blueTeamButton);
 
@@ -35,6 +34,7 @@ public class LobbyScreen extends JPanel {
     redTeamButton.addActionListener(e -> joinTeam("Red"));
     redTeamButton.setBounds(600, 150, 200, 50);
     this.add(redTeamButton);
+
     readyButton = new JButton("Ready");
     readyButton.addActionListener(this::toggleReady);
     readyButton.setBounds(400, 250, 200, 50);
