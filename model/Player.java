@@ -2,6 +2,7 @@ package model;
 
 import java.awt.*;
 import struct.MyArrayList;
+import util.Util;
 
 public class Player extends Sprite {
   static final float RADIUS = 30;
@@ -52,32 +53,31 @@ public class Player extends Sprite {
 
   @Override
   public void update(MyArrayList<Sprite> sprites, float dt) {
-    boolean x_collides = false;
-    boolean y_collides = false;
+    applyForce(0, 300f * dt); // gravity
+    applyDrag((float) Math.pow(0.99f, dt / 0.16f));
+
+    body.state.x += body.state.x_vel * dt;
+    body.state.y += body.state.y_vel * dt;
+
     try {
       for (Sprite sprite : sprites) {
         if (sprite == this) {
           continue;
         }
-        if (Collision.isColliding(
-            (Sprite) this.cloneWithOffset(body.state.x_vel * dt, 0), sprite)) {
-          body.state.x_vel *= -1;
-          body.state.x += body.state.x_vel * dt;
-          x_collides = true;
+
+        if (sprite instanceof Platform platform) {
+          if (Collision.isColliding(this, platform)) {
+            // bounce off the platform
+            Util.playSound("boing.wav");
+            body.state.y_vel *= -0.5f; // restitution
+            body.state.y = platform.body.state.y - RADIUS;
+            return;
+          }
         }
-        if (Collision.isColliding(
-            (Sprite) this.cloneWithOffset(0, body.state.y_vel * dt), sprite)) {
-          body.state.y_vel *= -1;
-          body.state.y += body.state.y_vel * dt;
-          y_collides = true;
-        }
-        if (x_collides || y_collides) break;
       }
     } catch (Exception e) {
       e.printStackTrace();
     }
-    if (!x_collides) body.state.x += body.state.x_vel * dt;
-    if (!y_collides) body.state.y += body.state.y_vel * dt;
   }
 
   @Override

@@ -48,9 +48,6 @@ public class Game {
     float dt = (float) (ct - time) / 1000f;
     time = ct;
 
-    player.applyForce(0, 7000f * dt); // gravity
-    player.applyDrag(0.9f);
-
     player.update(sprites, dt);
   }
 
