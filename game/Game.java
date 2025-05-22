@@ -26,13 +26,13 @@ public class Game {
     this.sprites.add(new Platform(500, 445, 1000, 10));
   }
 
-  public void update(float dt) {
+  public void update(float dt, boolean[] keys) {
     for (Sprite sprite : sprites) {
       sprite.applyForce(0, 0.1f);
       sprite.applyDrag(0.95f);
     }
     for (Sprite sprite : sprites) {
-      sprite.update(sprites, dt);
+      sprite.update(sprites, dt, keys);
     }
   }
 

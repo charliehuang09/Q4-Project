@@ -45,7 +45,7 @@ public class DeathBall extends Sprite {
   }
 
   @Override
-  public void update(MyArrayList<Sprite> sprites, float dt) {
+  public void update(MyArrayList<Sprite> sprites, float dt, boolean keys[]) {
     boolean x_collides = false;
     boolean y_collides = false;
     try {
