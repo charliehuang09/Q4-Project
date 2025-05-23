@@ -40,7 +40,7 @@ public abstract class PacketManager {
     }
   }
 
-  public void sendPacket(Packet packet, DataOutputStream out) throws IOException {
+  public synchronized void sendPacket(Packet packet, DataOutputStream out) throws IOException {
     packet.write(out);
     out.flush();
   }

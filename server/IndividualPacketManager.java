@@ -11,6 +11,7 @@ import network.Packet;
 import network.PacketManager;
 import network.packets.JoinRequestPacket;
 import network.packets.ReadyUpPacket;
+import network.packets.SetPlayerIdPacket;
 import network.packets.TeamSelectionPacket;
 import network.packets.UpdatePosPacket;
 
@@ -30,6 +31,8 @@ public class IndividualPacketManager extends PacketManager {
     this.in = new DataInputStream(socket.getInputStream());
     this.out = new DataOutputStream(socket.getOutputStream());
     this.server = server;
+
+    sendPacket(new SetPlayerIdPacket(id));
 
     this.executor = Executors.newSingleThreadExecutor();
 

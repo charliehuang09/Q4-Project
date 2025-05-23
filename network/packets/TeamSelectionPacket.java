@@ -7,7 +7,7 @@ import java.io.IOException;
 import network.Packet;
 
 public class TeamSelectionPacket extends Packet {
-  private String team;
+  public String team;
 
   public TeamSelectionPacket() {
   }
@@ -29,9 +29,5 @@ public class TeamSelectionPacket extends Packet {
   @Override
   public void read(DataInput in) throws IOException {
     this.team = in.readUTF();
-  }
-
-  public String getTeam() {
-    return team;
   }
 }

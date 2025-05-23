@@ -49,6 +49,21 @@ public class MyHashMap<K, V> {
         return keySet;
     }
 
+    @SuppressWarnings("unchecked")
+    public MyArrayList<V> values() {
+        MyArrayList<V> values = new MyArrayList<>();
+        for (int i = 0; i < hashArray.length; i++) {
+            if (hashArray[i] != null) {
+                values.add((V) hashArray[i]);
+            }
+        }
+        return values;
+    }
+
+    public boolean containsKey(K key) {
+        return keySet.contains(key);
+    }
+
     private int getIndex(Object key) {
         // use python modulus
         return (((key.hashCode() % DEFAULT_CAPACITY) + DEFAULT_CAPACITY) % DEFAULT_CAPACITY);

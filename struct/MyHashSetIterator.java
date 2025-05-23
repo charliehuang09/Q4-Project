@@ -1,4 +1,5 @@
 package struct;
+
 import java.util.Iterator;
 
 public class MyHashSetIterator<E> implements Iterator<E> {
@@ -6,7 +7,7 @@ public class MyHashSetIterator<E> implements Iterator<E> {
     private Object[] hashTable;
 
     public MyHashSetIterator(Object[] hashTable) {
-        currentIndex = 0;
+        currentIndex = -1;
         this.hashTable = hashTable;
         findNext();
     }

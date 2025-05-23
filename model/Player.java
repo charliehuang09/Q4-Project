@@ -6,7 +6,7 @@ import util.Util;
 
 public class Player extends Sprite {
   static final float RADIUS = 30;
-  private Team team;
+  public Team team;
   public CircleRigid body;
 
   public Player(float x, float y, Team team) {

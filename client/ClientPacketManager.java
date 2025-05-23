@@ -6,36 +6,55 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
+import game.Game;
+import model.Player;
+import model.Team;
 import network.Packet;
 import network.PacketManager;
+import network.packets.AddPlayerPacket;
+import network.packets.SetPlayerIdPacket;
 import network.packets.SwitchStatePacket;
 import network.packets.TeamSelectionPacket;
+import network.packets.UpdatePosPacket;
 
 public class ClientPacketManager extends PacketManager {
   protected Socket socket;
   protected DataInputStream in;
   protected DataOutputStream out;
 
-  private ExecutorService executor;
+  private ExecutorService sendingExecutor;
+  private ScheduledExecutorService receivingExecutor;
 
   private ClientController controller;
 
   public ClientPacketManager() {
-    this.executor = Executors.newSingleThreadExecutor();
+    this.sendingExecutor = Executors.newFixedThreadPool(1);
+    this.receivingExecutor = Executors.newScheduledThreadPool(1);
 
     registerPacket(SwitchStatePacket.class);
     registerPacket(TeamSelectionPacket.class);
+    registerPacket(UpdatePosPacket.class);
+    registerPacket(SetPlayerIdPacket.class);
+    registerPacket(AddPlayerPacket.class);
   }
 
   @Override
   public void onReceive(Packet packet) {
     System.out.println("[client:network] Received " + packet.getId());
 
-    if (packet instanceof SwitchStatePacket ssp) {
-      controller.setCurrentState(ClientController.GameState.valueOf(ssp.getNewState()));
+    if (packet instanceof UpdatePosPacket upp) {
+      controller.updatePlayerPosition(upp.playerId, upp.x, upp.y);
+    } else if (packet instanceof SwitchStatePacket ssp) {
+      controller.setCurrentState(ClientController.GameState.valueOf(ssp.newState));
     } else if (packet instanceof TeamSelectionPacket tsp) {
-      controller.selectTeam(tsp.getTeam());
+      controller.selectTeam(tsp.team);
+    } else if (packet instanceof SetPlayerIdPacket sip) {
+      controller.setId(sip.playerId);
+    } else if (packet instanceof AddPlayerPacket app) {
+      controller.addPlayer(app.playerId, new Player(0, 0, Team.valueOf(app.team)));
     } else {
       System.out.println("[client:controller] Unknown packet type: " + packet.getClass().getName());
     }
@@ -61,7 +80,7 @@ public class ClientPacketManager extends PacketManager {
     in = new DataInputStream(socket.getInputStream());
     out = new DataOutputStream(socket.getOutputStream());
 
-    start();
+    startReceiving();
   }
 
   public void disconnect() {
@@ -70,14 +89,14 @@ public class ClientPacketManager extends PacketManager {
       controller.stopGame();
       controller.setCurrentState(ClientController.GameState.MENU);
       socket.close();
-      executor.shutdownNow();
+      sendingExecutor.shutdownNow();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
 
-  public void start() {
-    executor.submit(() -> {
+  public void startReceiving() {
+    sendingExecutor.submit(() -> {
       try {
         while (true) {
           System.out.println("[client:network] Waiting for packet...");
@@ -89,5 +108,12 @@ public class ClientPacketManager extends PacketManager {
         disconnect();
       }
     });
+  }
+
+  public void startSending(Game game) {
+    receivingExecutor.scheduleAtFixedRate(() -> {
+      UpdatePosPacket upp = new UpdatePosPacket(controller.id, game.player.body.state.x, game.player.body.state.y);
+      sendPacket(upp);
+    }, 0, 1000 / 60, TimeUnit.MILLISECONDS);
   }
 }

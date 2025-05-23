@@ -4,6 +4,8 @@ import java.awt.Graphics;
 
 import client.view.ClientScreen;
 import game.Game;
+import model.Player;
+import model.Team;
 import network.Packet;
 import network.packets.JoinRequestPacket;
 import network.packets.ReadyUpPacket;
@@ -17,10 +19,11 @@ public class ClientController {
     LOBBY,
     IN_GAME
   }
-
+  
   private ClientPacketManager packetManager;
   private ClientScreen screen;
-
+  
+  public int id;
   private Game game;
 
   public ClientController(ClientPacketManager packetManager, ClientScreen screen) {
@@ -33,14 +36,20 @@ public class ClientController {
     this.game = new Game();
   }
 
+  public void setId(int id) {
+    this.id = id;
+    this.game.setId(id);
+    System.out.println("[client:controller] Set ID: " + id);
+  }
+
   public void selectTeam(String team) {
-    System.out.println("[client:controller] Team selected: " + team);
-    // TODO: store team
+    System.out.println("[client:controller] Team selected by server: " + team);
+    game.getPlayer().team = Team.valueOf(team);
   }
   
   public void requestTeam(String team) {
-    // TODO: store team
     sendPacket(new TeamSelectionPacket(team));
+    game.getPlayer().team = Team.valueOf(team);
   }
 
   public void readyUp(boolean ready) {
@@ -48,6 +57,7 @@ public class ClientController {
   }
 
   public void setCurrentState(GameState state) {
+    System.out.println("[client:controller] Changing state to " + state);
     switch (state) {
       case MENU:
         screen.showScreen("menuScreen");
@@ -56,14 +66,26 @@ public class ClientController {
         screen.showScreen("lobbyScreen");
         break;
       case IN_GAME:
-        screen.showScreen("gameScreen");
         startGame();
+        screen.showScreen("gameScreen");
         break;
     }
   }
 
   public void startGame() {
+    game.initPlayer();
     game.start();
+    packetManager.startSending(game);
+  }
+
+  public void addPlayer(int playerId, Player player) {
+    System.out.println("[client:controller] Adding player " + playerId);
+    game.addPlayer(playerId, player);
+  }
+
+  public void updatePlayerPosition(int playerId, float x, float y) {
+    System.out.println("[client:controller] Updating position for player " + playerId + " to (" + x + ", " + y + ")");
+    game.updatePlayerPosition(playerId, x, y);
   }
 
   public void stopGame() {
@@ -77,7 +99,6 @@ public class ClientController {
   public void attemptConnect() {
     connect("localhost", 31415);
     sendPacket(new JoinRequestPacket("PlayerName")); // TODO: get player name from input
-    setCurrentState(ClientController.GameState.LOBBY);
   }
 
   public void connect(String host, int port) {

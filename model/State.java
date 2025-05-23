@@ -1,8 +1,8 @@
 package model;
 
 public class State {
-  float x;
-  float y;
+  public float x;
+  public float y;
   float x_vel;
   float y_vel;
   float mass;
