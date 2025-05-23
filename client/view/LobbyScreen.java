@@ -45,7 +45,7 @@ public class LobbyScreen extends JPanel {
 
   private void joinTeam(String team) {
     teamLabel.setText("Team: " + team);
-    clientScreen.getController().requestTeam(team);
+    clientScreen.getController().requestTeam(team.toUpperCase());
   }
 
   private void toggleReady(ActionEvent e) {

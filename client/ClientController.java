@@ -34,6 +34,7 @@ public class ClientController {
     this.screen.setController(this);
 
     this.game = new Game();
+    game.initPlayer();
   }
 
   public void setId(int id) {
@@ -73,7 +74,6 @@ public class ClientController {
   }
 
   public void startGame() {
-    game.initPlayer();
     game.start();
     packetManager.startSending(game);
   }
