@@ -54,34 +54,42 @@ public class Player extends Sprite {
   }
 
   @Override
-  public void update(MyArrayList<Sprite> sprites, float dt) {
+  public void update(MyArrayList<Sprite> sprites, float dt, boolean keys[]) {
     boolean x_collides = false;
     boolean y_collides = false;
-    try {
-      for (Sprite sprite : sprites) {
-        if (sprite == this) {
-          continue;
-        }
-        if (Collision.isColliding(
-            (Sprite) this.cloneWithOffset(body.state.x_vel * dt, 0), sprite)) {
-          body.state.x_vel *= -1;
-          body.state.x += body.state.x_vel * dt;
-          x_collides = true;
-        }
-        if (Collision.isColliding(
-            (Sprite) this.cloneWithOffset(0, body.state.y_vel * dt), sprite)) {
-          body.state.y_vel *= -1;
-          body.state.y += body.state.y_vel * dt;
-          y_collides = true;
-        }
-        if (x_collides || y_collides) break;
+
+    if (keys[0]) {
+      applyForce(0, -2f * dt);
+    }
+    if (keys[1]) {
+      applyForce(-2f * dt, 0f);
+    }
+    if (keys[2]) {
+      applyForce(0, 2f * dt);
+    }
+    if (keys[3]) {
+      applyForce(2f * dt, 0f);
+    }
+
+    for (Sprite sprite : sprites) {
+      if (sprite == this) {
+        continue;
       }
-    } catch (Exception e) {
-      e.printStackTrace();
+      if (Collision.isColliding((Sprite) this.cloneWithOffset(body.state.x_vel * dt, 0), sprite)) {
+        body.state.x_vel *= -1;
+        body.state.x += body.state.x_vel * dt;
+        x_collides = true;
+      }
+      if (Collision.isColliding((Sprite) this.cloneWithOffset(0, body.state.y_vel * dt), sprite)) {
+        body.state.y_vel *= -1;
+        body.state.y += body.state.y_vel * dt;
+        y_collides = true;
+      }
+      if (x_collides || y_collides) break;
     }
     if (!x_collides) body.state.x += body.state.x_vel * dt;
     if (!y_collides) body.state.y += body.state.y_vel * dt;
-    graple.update(dt, true);
+    graple.update(dt, keys[4]);
   }
 
   @Override

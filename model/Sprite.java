@@ -12,7 +12,7 @@ public abstract class Sprite {
 
   public abstract void applyForce(float x, float y);
 
-  public abstract void update(MyArrayList<Sprite> sprites, float dt);
+  public abstract void update(MyArrayList<Sprite> sprites, float dt, boolean[] keys);
 
   public abstract boolean isColliding(Sprite sprite);
 
