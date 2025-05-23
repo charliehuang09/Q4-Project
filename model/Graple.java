@@ -1,9 +1,10 @@
 package model;
 
+import java.awt.Color;
 import java.awt.Graphics;
 
 class Graple {
-  private float MAX_DISTANCE = 500.0f;
+  private float MAX_DISTANCE = 100.0f;
   public float grapleLength;
   public DeathBall deathBall;
   public Player player;
@@ -57,6 +58,8 @@ class Graple {
   }
 
   public void draw(Graphics g) {
+    if (!active) return;
+    g.setColor(Color.BLACK);
     g.drawLine(
         (int) (player.body.state.x - (Player.RADIUS / 2)),
         (int) (player.body.state.y - (Player.RADIUS / 2)),
