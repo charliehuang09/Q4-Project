@@ -26,8 +26,8 @@ public class ClientScreen extends JPanel implements ActionListener {
     MenuScreen menuScreen = new MenuScreen(this);
     LobbyScreen lobbyScreen = new LobbyScreen(this);
     GameScreen gameScreen = new GameScreen(this);
-    gameScreen.addKeyListener(gameScreen);
-    gameScreen.setFocusable(true);
+    // gameScreen.addKeyListener(gameScreen);
+    // gameScreen.setFocusable(true);
 
     mainPanel.add(menuScreen, "menuScreen");
     mainPanel.add(lobbyScreen, "lobbyScreen");

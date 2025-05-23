@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 
 public class GameScreen extends JPanel implements KeyListener {
-  // @SuppressWarnings("unused")
+  @SuppressWarnings("unused")
   private ClientScreen clientScreen;
 
   private Game game;
@@ -31,6 +31,10 @@ public class GameScreen extends JPanel implements KeyListener {
     for (int i = 0; i < keys.length; i++) {
       keys[i] = false;
     }
+
+    setFocusable(true); // Allow the panel to receive key events
+    addKeyListener(this); // Register KeyListener
+    requestFocusInWindow();
   }
 
   private void update() {
@@ -40,13 +44,14 @@ public class GameScreen extends JPanel implements KeyListener {
 
   @Override
   protected void paintComponent(Graphics g) {
+    // TODO Jeremy fix
+    requestFocusInWindow();
     super.paintComponent(g);
     game.draw(g);
   }
 
   @Override
   public void keyPressed(KeyEvent e) {
-    System.exit(0);
     if (e.getKeyCode() == KeyEvent.VK_W) {
       keys[0] = true;
     }
@@ -60,13 +65,12 @@ public class GameScreen extends JPanel implements KeyListener {
       keys[3] = true;
     }
     if (e.getKeyCode() == KeyEvent.VK_Z) {
-      keys[3] = true;
+      keys[4] = true;
     }
   }
 
   @Override
   public void keyReleased(KeyEvent e) {
-    System.exit(0);
     if (e.getKeyCode() == KeyEvent.VK_W) {
       keys[0] = false;
     }

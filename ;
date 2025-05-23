@@ -64,13 +64,6 @@ public class Player extends Sprite {
     if (keys[1]) {
       applyForce(-2f * dt, 0f);
     }
-    if (keys[2]) {
-      applyForce(0, 2f * dt);
-    }
-    if (keys[3]) {
-      applyForce(2f * dt, 0f);
-    }
-
     for (Sprite sprite : sprites) {
       if (sprite == this) {
         continue;
@@ -89,7 +82,7 @@ public class Player extends Sprite {
     }
     if (!x_collides) body.state.x += body.state.x_vel * dt;
     if (!y_collides) body.state.y += body.state.y_vel * dt;
-    graple.update(dt, keys[4]);
+    graple.update(dt, true);
   }
 
   @Override
