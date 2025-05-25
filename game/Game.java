@@ -67,7 +67,7 @@ public class Game {
   }
 
   public void initPlayer() {
-    this.player = new Player(100, 10, Team.NONE);
+    this.player = new Player(100, 10, "", Team.NONE);
   }
 
   private void initGame() {

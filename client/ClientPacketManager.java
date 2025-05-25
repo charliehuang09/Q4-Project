@@ -16,8 +16,8 @@ import network.Packet;
 import network.PacketManager;
 import network.packets.AddPlayerPacket;
 import network.packets.SetPlayerIdPacket;
+import network.packets.SetTeamPacket;
 import network.packets.SwitchStatePacket;
-import network.packets.TeamSelectionPacket;
 import network.packets.UpdatePosPacket;
 
 public class ClientPacketManager extends PacketManager {
@@ -35,7 +35,7 @@ public class ClientPacketManager extends PacketManager {
     this.receivingExecutor = Executors.newScheduledThreadPool(1);
 
     registerPacket(SwitchStatePacket.class);
-    registerPacket(TeamSelectionPacket.class);
+    registerPacket(SetTeamPacket.class);
     registerPacket(UpdatePosPacket.class);
     registerPacket(SetPlayerIdPacket.class);
     registerPacket(AddPlayerPacket.class);
@@ -49,12 +49,12 @@ public class ClientPacketManager extends PacketManager {
       controller.updatePlayerPosition(upp.playerId, upp.x, upp.y);
     } else if (packet instanceof SwitchStatePacket ssp) {
       controller.setCurrentState(ClientController.GameState.valueOf(ssp.newState));
-    } else if (packet instanceof TeamSelectionPacket tsp) {
-      controller.selectTeam(tsp.team);
+    } else if (packet instanceof SetTeamPacket stp) {
+      controller.selectTeam(stp.playerId, stp.team);
     } else if (packet instanceof SetPlayerIdPacket sip) {
       controller.setId(sip.playerId);
     } else if (packet instanceof AddPlayerPacket app) {
-      controller.addPlayer(app.playerId, new Player(0, 0, Team.valueOf(app.team)));
+      controller.addPlayer(app.playerId, new Player(0, 0, app.name, Team.valueOf(app.team)));
     } else {
       System.out.println("[client:controller] Unknown packet type: " + packet.getClass().getName());
     }

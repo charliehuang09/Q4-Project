@@ -6,16 +6,18 @@ import util.Util;
 
 public class Player extends Sprite {
   static final float RADIUS = 30;
+  public String name;
   public Team team;
   public CircleRigid body;
 
-  public Player(float x, float y, Team team) {
+  public Player(float x, float y, String name, Team team) {
+    this.name = name;
     this.team = team;
     this.body = new CircleRigid(x, y, RADIUS);
   }
 
   public Player cloneWithOffset(float x_offset, float y_offset) {
-    Player newPlayer = new Player(body.state.x, body.state.y, team);
+    Player newPlayer = new Player(body.state.x, body.state.y, name, team);
     newPlayer.body.state.x_vel = body.state.x_vel + x_offset;
     newPlayer.body.state.y_vel = body.state.y_vel + y_offset;
     return newPlayer;

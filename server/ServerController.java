@@ -5,6 +5,7 @@ import java.io.IOException;
 import model.Team;
 import model.Player;
 import network.packets.AddPlayerPacket;
+import network.packets.SetTeamPacket;
 import network.packets.SwitchStatePacket;
 import struct.MyArrayList;
 import struct.MyHashMap;
@@ -58,6 +59,7 @@ public class ServerController {
       Team team = Team.valueOf(teamName.toUpperCase());
       playerInfos.get(playerId).team = team;
       game.updatePlayerTeam(playerId, team);
+      networkManager.broadcast(new SetTeamPacket(playerId, teamName));
 
       System.out.println("[server:controller] Player " + playerId + " selected team " + teamName);
     }
@@ -102,7 +104,7 @@ public class ServerController {
     playerInfos.put(playerId, new PlayerInfo(clientName, Team.NONE, false));
     
     // Add new placeholder player to the server's game
-    game.addPlayer(playerId, new Player(0, 0, Team.NONE));
+    game.addPlayer(playerId, new Player(0, 0, clientName, Team.NONE));
 
     // Send the client all of the other players, and send the new player to all of the other clients
     for (Integer otherPlayerId : playerInfos.keySet()) {

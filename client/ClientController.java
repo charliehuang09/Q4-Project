@@ -43,9 +43,13 @@ public class ClientController {
     System.out.println("[client:controller] Set ID: " + id);
   }
 
-  public void selectTeam(String team) {
-    System.out.println("[client:controller] Team selected by server: " + team);
-    game.getPlayer().team = Team.valueOf(team);
+  public void selectTeam(int playerId, String team) {
+    if (playerId == id) {
+      System.out.println("[client:controller] Setting own team to: " + team);
+      game.getPlayer().team = Team.valueOf(team);
+    } else {
+      game.updatePlayerTeam(playerId, Team.valueOf(team));
+    }
   }
   
   public void requestTeam(String team) {
