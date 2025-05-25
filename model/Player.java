@@ -5,6 +5,7 @@ import struct.MyArrayList;
 
 public class Player extends Sprite {
   static final float RADIUS = 30;
+  static final float MIDDLE = 500;
   private Team team;
   public CircleRigid body;
   public Graple graple;
@@ -71,6 +72,16 @@ public class Player extends Sprite {
     boolean x_collides = false;
     boolean y_collides = false;
     Platform plt = null;
+
+    if (this.team == Team.RED) {
+      if (body.rightX() > MIDDLE) {
+        x_collides = true;
+      }
+    } else {
+      if (body.leftX() < MIDDLE) {
+        x_collides = true;
+      }
+    }
 
     for (Sprite sprite : sprites) {
       if (sprite == this) {

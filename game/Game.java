@@ -20,7 +20,8 @@ public class Game {
     this.sprites.add(new DeathBall(300, 80));
 
     // Player
-    this.sprites.add(new Player(100, 80, Team.BLUE, (DeathBall) sprites.get(0)));
+    this.sprites.add(new Player(100, 80, Team.RED, (DeathBall) sprites.get(0)));
+    this.sprites.add(new Player(800, 80, Team.BLUE, (DeathBall) sprites.get(0)));
 
     // Platform
     this.sprites.add(new Platform(500, 445, 1000, 100));
