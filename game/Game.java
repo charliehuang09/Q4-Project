@@ -24,6 +24,9 @@ public class Game {
 
     // Platform
     this.sprites.add(new Platform(500, 445, 1000, 100));
+    this.sprites.add(new Platform(500, -100, 1000, 100));
+    this.sprites.add(new Platform(0, 0, 100, 600));
+    this.sprites.add(new Platform(1000, 0, 100, 600));
   }
 
   public void update(float dt, boolean[] keys) {
