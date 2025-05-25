@@ -23,12 +23,12 @@ public class Game {
     this.sprites.add(new Player(100, 80, Team.BLUE, (DeathBall) sprites.get(0)));
 
     // Platform
-    this.sprites.add(new Platform(500, 445, 1000, 10));
+    this.sprites.add(new Platform(500, 445, 1000, 100));
   }
 
   public void update(float dt, boolean[] keys) {
     for (Sprite sprite : sprites) {
-      sprite.applyForce(0, 0.1f);
+      sprite.applyForce(0, 0.2f);
       sprite.applyDrag(0.95f);
     }
     for (Sprite sprite : sprites) {
