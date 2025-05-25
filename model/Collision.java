@@ -53,6 +53,11 @@ public class Collision {
       Platform platform2 = (Platform) sprite2;
       return isColliding(platfrom1.body, platform2.body);
     }
+    if (sprite1 instanceof DeathBall && sprite2 instanceof Platform) {
+      DeathBall deathBall = (DeathBall) sprite1;
+      Platform platform2 = (Platform) sprite2;
+      return isColliding(deathBall.body, platform2.body);
+    }
     return false;
   }
 }

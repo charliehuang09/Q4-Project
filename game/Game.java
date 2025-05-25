@@ -23,7 +23,7 @@ public class Game {
     this.sprites.add(new Player(100, 80, Team.BLUE, (DeathBall) sprites.get(0)));
 
     // Platform
-    this.sprites.add(new Platform(500, 445, 1000, 10));
+    this.sprites.add(new Platform(500, 445, 1000, 100));
   }
 
   public void update(float dt, boolean[] keys) {

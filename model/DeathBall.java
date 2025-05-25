@@ -48,30 +48,27 @@ public class DeathBall extends Sprite {
   public void update(MyArrayList<Sprite> sprites, float dt, boolean keys[]) {
     boolean x_collides = false;
     boolean y_collides = false;
-    try {
-      for (Sprite sprite : sprites) {
-        if (!(sprite instanceof Platform)) {
-          continue;
-        }
+
+    for (Sprite sprite : sprites) {
+      if (sprite == this) {
+        continue;
+      }
+      if (sprite instanceof Platform) {
         if (Collision.isColliding(
             (Sprite) this.cloneWithOffset(body.state.x_vel * dt, 0), sprite)) {
-          body.state.x_vel *= -1;
-          body.state.x += body.state.x_vel * dt;
           x_collides = true;
         }
         if (Collision.isColliding(
             (Sprite) this.cloneWithOffset(0, body.state.y_vel * dt), sprite)) {
-          body.state.y_vel *= -1;
-          body.state.y += body.state.y_vel * dt;
           y_collides = true;
         }
-        if (x_collides || y_collides) break;
       }
-    } catch (Exception e) {
-      e.printStackTrace();
+      if (x_collides || y_collides) break;
     }
-    if (!x_collides) body.state.x += body.state.x_vel * dt;
-    if (!y_collides) body.state.y += body.state.y_vel * dt;
+    // if (x_collides) body.state.x *= -1;
+    // if (y_collides) body.state.y *= -1;
+    body.state.x += body.state.x_vel * dt;
+    body.state.y += body.state.y_vel * dt;
   }
 
   @Override
