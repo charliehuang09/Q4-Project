@@ -52,11 +52,10 @@ public class IndividualPacketManager extends PacketManager {
   }
 
   public void sendPacket(Packet packet) {
-    System.out.println("[server:network] Sending " + packet.getId() + " to client " + id);
     try {
       super.sendPacket(packet, out);
     } catch (IOException e) {
-      System.out.println("[server:network] Failed to sendPacket, disconnecting: " + e.getMessage());
+      System.out.println("[server:network] Failed to sendPacket " + packet.getId() + ", disconnecting: " + e.getMessage());
       disconnect();
     }
   }

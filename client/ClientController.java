@@ -12,6 +12,10 @@ import network.packets.ReadyUpPacket;
 import network.packets.TeamSelectionPacket;
 
 public class ClientController {
+  public static final boolean DEBUG = false;
+  static void dprintln(String message) {
+    if (DEBUG) System.out.println(message);
+  }
 
   // GameState Enum
   public enum GameState {
@@ -83,12 +87,17 @@ public class ClientController {
   }
 
   public void addPlayer(int playerId, Player player) {
-    System.out.println("[client:controller] Adding player " + playerId);
+    System.out.println("[client:controller] Adding player " + playerId + " - " + player.name);
     game.addPlayer(playerId, player);
   }
 
+  public void removePlayer(int playerId) {
+    System.out.println("[client:controller] Removing player " + playerId);
+    game.removePlayer(playerId);
+  }
+
   public void updatePlayerPosition(int playerId, float x, float y) {
-    System.out.println("[client:controller] Updating position for player " + playerId + " to (" + x + ", " + y + ")");
+    dprintln("[client:controller] Updating position for player " + playerId + " to (" + x + ", " + y + ")");
     game.updatePlayerPosition(playerId, x, y);
   }
 

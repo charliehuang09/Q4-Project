@@ -43,6 +43,15 @@ public class Game {
     this.players.put(id, player);
   }
 
+  public void removePlayer(int id) {
+    if (!this.players.containsKey(id)) {
+      System.out.println("[game] Player " + id + " not found.");
+      return;
+    }
+
+    this.players.remove(id);
+  }
+
   public void updatePlayerPosition(int id, float x, float y) {
     if (id == this.id) {
       return;
@@ -67,7 +76,7 @@ public class Game {
   }
 
   public void initPlayer() {
-    this.player = new Player(100, 10, "", Team.NONE);
+    this.player = new Player(100, 10, "PlayerName", Team.NONE);
   }
 
   private void initGame() {

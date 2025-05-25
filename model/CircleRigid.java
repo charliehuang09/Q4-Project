@@ -6,6 +6,7 @@ public class CircleRigid {
 
   public CircleRigid(float x, float y, float radius) {
     this.state = new State(x, y, 0, 0, 1);
+    this.radius = radius;
   }
 
   public float rightX() {

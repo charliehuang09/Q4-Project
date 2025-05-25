@@ -15,6 +15,7 @@ import model.Team;
 import network.Packet;
 import network.PacketManager;
 import network.packets.AddPlayerPacket;
+import network.packets.RemovePlayerPacket;
 import network.packets.SetPlayerIdPacket;
 import network.packets.SetTeamPacket;
 import network.packets.SwitchStatePacket;
@@ -39,11 +40,12 @@ public class ClientPacketManager extends PacketManager {
     registerPacket(UpdatePosPacket.class);
     registerPacket(SetPlayerIdPacket.class);
     registerPacket(AddPlayerPacket.class);
+    registerPacket(RemovePlayerPacket.class);
   }
 
   @Override
   public void onReceive(Packet packet) {
-    System.out.println("[client:network] Received " + packet.getId());
+    ClientController.dprintln("[client:network] Received " + packet.getId());
 
     if (packet instanceof UpdatePosPacket upp) {
       controller.updatePlayerPosition(upp.playerId, upp.x, upp.y);
@@ -55,6 +57,8 @@ public class ClientPacketManager extends PacketManager {
       controller.setId(sip.playerId);
     } else if (packet instanceof AddPlayerPacket app) {
       controller.addPlayer(app.playerId, new Player(0, 0, app.name, Team.valueOf(app.team)));
+    } else if (packet instanceof RemovePlayerPacket rpp) {
+      controller.removePlayer(rpp.playerId);
     } else {
       System.out.println("[client:controller] Unknown packet type: " + packet.getClass().getName());
     }
@@ -99,7 +103,7 @@ public class ClientPacketManager extends PacketManager {
     sendingExecutor.submit(() -> {
       try {
         while (true) {
-          System.out.println("[client:network] Waiting for packet...");
+          ClientController.dprintln("[client:network] Waiting for packet...");
           Packet packet = receivePacket(in);
           onReceive(packet);
         }

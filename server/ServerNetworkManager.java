@@ -41,7 +41,7 @@ public class ServerNetworkManager {
   }
 
   public void sendPacket(Packet packet, int playerId) {
-    System.out.println("[server:network] Sending " + packet.getId() + " to client " + playerId);
+    ServerController.dprintln("[server:network] Sending " + packet.getId() + " to client " + playerId);
     for (IndividualPacketManager ipm : connectionManagers) {
       if (ipm.id == playerId) {
         ipm.sendPacket(packet);
@@ -56,7 +56,7 @@ public class ServerNetworkManager {
   }
 
   public void onReceive(Packet packet, int playerId) {
-    System.out.println("[server:network] Received " + packet.getId());
+    ServerController.dprintln("[server:network] Received " + packet.getId());
 
     if (packet instanceof JoinRequestPacket jrp) {
       controller.handleJoinRequest(playerId, jrp.clientName);
@@ -79,10 +79,10 @@ public class ServerNetworkManager {
 
   public void removeConnection(IndividualPacketManager ipm) {
     System.out.println("[server:network] Client disconnected: " + ipm.socket.getInetAddress().getHostAddress());
-    clientIps.remove(ipm.socket.getInetAddress().getHostAddress());
-    controller.onDisconnect(ipm.id);
-    controller.updateIPs(clientIps);
     connectionManagers.remove(ipm);
+    controller.onDisconnect(ipm.id);
+    clientIps.remove(ipm.socket.getInetAddress().getHostAddress());
+    controller.updateIPs(clientIps);
   }
 
   public void startReceiving(int port) throws IOException {
@@ -114,10 +114,10 @@ public class ServerNetworkManager {
       }
       for (Integer id : game.players.keySet()) {
         Player player = game.players.get(id);
-        System.out.println("[server:network] Sending position update for player " + id + ": " + player.body.state.x + ", " + player.body.state.y);
+        ServerController.dprintln("[server:network] Sending position update for player " + id + ": " + player.body.state.x + ", " + player.body.state.y);
         UpdatePosPacket upp = new UpdatePosPacket(id, player.body.state.x, player.body.state.y);
         broadcast(upp);
       }
-    }, 0, 1000 / 60, TimeUnit.MILLISECONDS);
+    }, 0, 1000 / 20, TimeUnit.MILLISECONDS);
   }
 }

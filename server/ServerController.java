@@ -5,6 +5,7 @@ import java.io.IOException;
 import model.Team;
 import model.Player;
 import network.packets.AddPlayerPacket;
+import network.packets.RemovePlayerPacket;
 import network.packets.SetTeamPacket;
 import network.packets.SwitchStatePacket;
 import struct.MyArrayList;
@@ -13,6 +14,11 @@ import struct.MyHashMap;
 import game.Game;
 
 public class ServerController {
+  public static final boolean DEBUG = false;
+  static void dprintln(String message) {
+    if (DEBUG) System.out.println(message);
+  }
+
   private Game game;
 
   private ServerNetworkManager networkManager;
@@ -93,7 +99,7 @@ public class ServerController {
   public void updatePlayerPosition(int playerId, float x, float y) {
     if (gameState == GameState.IN_GAME) {
       game.updatePlayerPosition(playerId, x, y);
-      System.out.println("[server:controller] Player " + playerId + " position updated to: " + x + ", " + y);
+      dprintln("[server:controller] Player " + playerId + " position updated to: " + x + ", " + y);
     }
   }
 
@@ -122,6 +128,8 @@ public class ServerController {
 
   public void onDisconnect(int playerId) {
     playerInfos.remove(playerId);
+    game.removePlayer(playerId);
+    networkManager.broadcast(new RemovePlayerPacket(playerId));
 
     if (playerInfos.size() == 0) {
       gameState = GameState.LOBBY;

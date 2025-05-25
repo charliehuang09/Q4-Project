@@ -1,19 +1,36 @@
 package util;
 
-import java.io.InputStream;
+import java.io.File;
+import java.io.IOException;
 
+import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class Util {
-  public static void playSound(String filename) {
-    try {
-      InputStream inputStream = Util.class.getResourceAsStream("../sound/" + filename);
-      Clip clip = AudioSystem.getClip();
-      clip.open(AudioSystem.getAudioInputStream(inputStream));
-      clip.start();
-    } catch (Exception e) {
-      System.out.println("Error playing sound: " + e.getMessage());
-    }
+  public static synchronized void playSound(final String fileName) {
+    new Thread(new Runnable() {
+      public void run() {
+        try {
+          File soundFile = new File("./sound/" + fileName);
+          AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
+
+          Clip clip = AudioSystem.getClip();
+          clip.open(audioIn);
+          clip.start();
+
+          clip.addLineListener(event -> {
+            if (event.getType() == javax.sound.sampled.LineEvent.Type.STOP) {
+              clip.close();
+            }
+          });
+
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+          e.printStackTrace();
+        }
+      }
+    }).start();
   }
 }

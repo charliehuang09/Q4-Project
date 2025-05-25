@@ -5,7 +5,7 @@ import struct.MyArrayList;
 import util.Util;
 
 public class Player extends Sprite {
-  static final float RADIUS = 30;
+  static final float RADIUS = 15;
   public String name;
   public Team team;
   public CircleRigid body;
@@ -36,10 +36,16 @@ public class Player extends Sprite {
       g.setColor(Color.BLUE);
     }
     g.fillOval(
-        (int) (body.state.x - (RADIUS)),
-        (int) (body.state.y - (RADIUS)),
-        (int) RADIUS,
-        (int) RADIUS);
+      (int) (body.state.x - (RADIUS)),
+      (int) (body.state.y - (RADIUS)),
+      (int) RADIUS * 2,
+      (int) RADIUS * 2);
+
+    // Draw the name of the player
+    g.setColor(Color.BLACK);
+    g.setFont(new Font("Arial", Font.BOLD, 12));
+    int width = g.getFontMetrics().stringWidth(name);
+    g.drawString(name, (int) (body.state.x - width / 2), (int) (body.state.y - RADIUS * 1.2f));
   }
 
   @Override
@@ -70,9 +76,10 @@ public class Player extends Sprite {
         if (sprite instanceof Platform platform) {
           if (Collision.isColliding(this, platform)) {
             // bounce off the platform
-            Util.playSound("boing.wav");
+            if (Math.abs(body.state.y_vel) > 10f)
+              Util.playSound("boing.wav");
             body.state.y_vel *= -0.5f; // restitution
-            body.state.y = platform.body.state.y - RADIUS;
+            body.state.y = platform.body.upY() - RADIUS;
             return;
           }
         }
