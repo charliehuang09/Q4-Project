@@ -32,8 +32,8 @@ public class Game {
 
   public void update(float dt, boolean[] keys) {
     for (Sprite sprite : sprites) {
-      sprite.applyForce(0, 0.2f);
-      sprite.applyDrag(0.95f);
+      sprite.applyForce(0, 0.7f);
+      sprite.applyDrag(0.98f);
     }
     for (Sprite sprite : sprites) {
       sprite.update(sprites, dt, keys);

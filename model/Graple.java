@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 class Graple {
-  private float MAX_DISTANCE = 100.0f;
+  private float MAX_DISTANCE = 250.0f;
   public float grapleLength;
   public DeathBall deathBall;
   public Player player;
