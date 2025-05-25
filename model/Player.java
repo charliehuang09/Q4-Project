@@ -6,6 +6,7 @@ import struct.MyArrayList;
 public class Player extends Sprite {
   static final float RADIUS = 30;
   static final float MIDDLE = 500;
+  static final float MOVE_STRENGTH = 0.5f;
   private Team team;
   public CircleRigid body;
   public Graple graple;
@@ -57,16 +58,16 @@ public class Player extends Sprite {
   @Override
   public void update(MyArrayList<Sprite> sprites, float dt, boolean keys[]) {
     if (keys[0]) {
-      applyForce(0, -2f * dt);
+      applyForce(0, MOVE_STRENGTH * -dt);
     }
     if (keys[1]) {
-      applyForce(-2f * dt, 0f);
+      applyForce(MOVE_STRENGTH * -dt, 0f);
     }
     if (keys[2]) {
-      applyForce(0, 2f * dt);
+      applyForce(0, MOVE_STRENGTH * dt);
     }
     if (keys[3]) {
-      applyForce(2f * dt, 0f);
+      applyForce(MOVE_STRENGTH * dt, 0f);
     }
 
     boolean x_collides = false;
