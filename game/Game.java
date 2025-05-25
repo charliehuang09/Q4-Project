@@ -28,7 +28,7 @@ public class Game {
 
   public void update(float dt, boolean[] keys) {
     for (Sprite sprite : sprites) {
-      sprite.applyForce(0, 0.1f);
+      sprite.applyForce(0, 0.2f);
       sprite.applyDrag(0.95f);
     }
     for (Sprite sprite : sprites) {

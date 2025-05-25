@@ -86,10 +86,7 @@ public class Player extends Sprite {
             (Sprite) this.cloneWithOffset(0, body.state.y_vel * dt), sprite)) {
           y_collides = true;
         }
-        if (x_collides || y_collides) {
-          System.out.println("Collides");
-          break;
-        }
+        if (x_collides || y_collides) break;
       }
     }
     if (x_collides) body.state.x_vel *= -1;
@@ -97,12 +94,7 @@ public class Player extends Sprite {
     body.state.x += body.state.x_vel * dt;
     body.state.y += body.state.y_vel * dt;
 
-    if (plt != null) {
-      if (Collision.isColliding((Sprite) this, (Sprite) plt)) {
-        System.out.println("STILL COLLIDING");
-      }
-    }
-    // graple.update(dt, keys[4]);
+    graple.update(dt, keys[4]);
   }
 
   @Override
