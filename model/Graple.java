@@ -61,9 +61,9 @@ class Graple {
     if (!active) return;
     g.setColor(Color.BLACK);
     g.drawLine(
-        (int) (player.body.state.x - (Player.RADIUS / 2)),
-        (int) (player.body.state.y - (Player.RADIUS / 2)),
-        (int) (deathBall.body.state.x - (Player.RADIUS / 2)),
-        (int) (deathBall.body.state.y - (Player.RADIUS / 2)));
+        (int) (player.body.state.x),
+        (int) (player.body.state.y),
+        (int) (deathBall.body.state.x),
+        (int) (deathBall.body.state.y));
   }
 }

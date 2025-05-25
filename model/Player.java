@@ -36,10 +36,11 @@ public class Player extends Sprite {
       g.setColor(Color.BLUE);
     }
     g.fillOval(
-        (int) (body.state.x - (RADIUS)),
-        (int) (body.state.y - (RADIUS)),
-        (int) RADIUS,
-        (int) RADIUS);
+        (int) (body.state.x - RADIUS),
+        (int) (body.state.y - RADIUS),
+        (int) (RADIUS * 2),
+        (int) (RADIUS * 2));
+
     graple.draw(g);
   }
 
