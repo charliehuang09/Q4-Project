@@ -87,6 +87,9 @@ public class Game {
 
     this.deathBall = new DeathBall(300, 80);
 
+    // Middle divider
+    this.sprites.add(new Platform(500, 0, 1, 800));
+
     // Platform
     this.sprites.add(new Platform(500, 445, 1000, 100));
     this.sprites.add(new Platform(500, -100, 1000, 100));
@@ -95,9 +98,6 @@ public class Game {
   }
 
   public void start() {
-    // TODO: remove this
-    this.player.body.state.x = (float) (Math.random() * 500);
-
     executor.scheduleAtFixedRate(this::update, 0, 1000 / 60, TimeUnit.MILLISECONDS);
   }
 
@@ -130,7 +130,7 @@ public class Game {
       player.draw(g);
     }
 
-    deathBall.draw(g);
     player.draw(g);
+    deathBall.draw(g);
   }
 }

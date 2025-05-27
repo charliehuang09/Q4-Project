@@ -7,6 +7,13 @@ import util.Util;
 public class Player extends Sprite {
   static final float RADIUS = 15;
 
+  private static final int FPS = 60; // frames per second
+  private static final float DT_STEP = 1000f / FPS; // time step for drag calculation
+  private static final float RESTITUTION = 0.8f; // bounce off platforms
+  private static final float DRAG_MULTIPLIER = 0.995f;
+  private static final float GRAVITY = 150f; // gravity force
+  private static final float MOVE_FORCE = 200f; // force applied when moving
+
   public String name;
   public Team team;
   public CircleRigid body;
@@ -33,6 +40,8 @@ public class Player extends Sprite {
 
   @Override
   public void draw(Graphics g) {
+    graple.draw(g);
+
     if (team == Team.RED) {
       g.setColor(Color.RED);
     } else {
@@ -59,43 +68,66 @@ public class Player extends Sprite {
   @Override
   public void update(MyArrayList<Sprite> sprites, float dt, boolean keys[]) {
     if (keys[0]) {
-      applyForce(0, -200f * dt);
+      applyForce(0, -MOVE_FORCE * dt);
     }
     if (keys[1]) {
-      applyForce(-200f * dt, 0f);
+      applyForce(-MOVE_FORCE * dt, 0f);
     }
     if (keys[2]) {
-      applyForce(0, 200f * dt);
+      applyForce(0, MOVE_FORCE * dt);
     }
     if (keys[3]) {
-      applyForce(200f * dt, 0f);
+      applyForce(MOVE_FORCE * dt, 0f);
     }
     
-    applyForce(0, 300f * dt); // gravity
-    applyDrag((float) Math.pow(0.99f, dt / 0.16f));
-
-    body.state.x += body.state.x_vel * dt;
+    applyForce(0, GRAVITY * dt); // gravity
+    applyDrag((float) Math.pow(DRAG_MULTIPLIER, dt / DT_STEP));
+    
     body.state.y += body.state.y_vel * dt;
-
-    try {
-      for (Sprite sprite : sprites) {
-        if (sprite == this) {
-          continue;
-        }
-
-        if (sprite instanceof Platform platform) {
-          if (Collision.isColliding(this, platform)) {
-            // bounce off the platform
-            if (Math.abs(body.state.y_vel) > 10f)
-              Util.playSound("boing.wav");
-            body.state.y_vel *= -0.5f; // restitution
+    
+    for (Sprite sprite : sprites) {
+      if (sprite == this) {
+        continue;
+      }
+      
+      if (sprite instanceof Platform platform) {
+        if (Collision.isColliding(this, platform)) {
+          // bounce off the platform
+          if (Math.abs(body.state.y_vel) > 10f)
+            Util.playSound("boing.wav");
+          if (body.state.y_vel > 0)
             body.state.y = platform.body.upY() - RADIUS;
-            return;
-          }
+          else
+            body.state.y = platform.body.downY() + RADIUS;
+
+          body.state.y_vel *= -RESTITUTION; // restitution
+          return;
         }
       }
-    } catch (Exception e) {
-      e.printStackTrace();
+    }
+    
+    body.state.x += body.state.x_vel * dt;
+
+    for (Sprite sprite : sprites) {
+      if (sprite == this) {
+        continue;
+      }
+      
+      if (sprite instanceof Platform platform) {
+        if (Collision.isColliding(this, platform)) {
+          // bounce off the platform
+          if (Math.abs(body.state.x_vel) > 10f)
+            Util.playSound("boing.wav");
+          
+          if (body.state.x_vel > 0)
+            body.state.x = platform.body.leftX() - RADIUS;
+          else
+            body.state.x = platform.body.rightX() + RADIUS;
+
+          body.state.x_vel *= -RESTITUTION; // restitution
+          return;
+        }
+      }
     }
 
     graple.update(dt, keys[4]);

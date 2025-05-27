@@ -44,6 +44,7 @@ class Graple {
       active = false;
       return;
     }
+
     if (!active) {
       if (getDistance() < MAX_DISTANCE) {
         active = true;

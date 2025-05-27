@@ -2,9 +2,15 @@ package model;
 
 import java.awt.*;
 import struct.MyArrayList;
+import util.Util;
 
 public class DeathBall extends Sprite {
-  static final float RADIUS = 30;
+  static final float RADIUS = 15;
+
+  private static final float GRAVITY = 150f; // gravity force
+  private static final float DRAG_MULTIPLIER = 0.99f; // drag multiplier
+  private static final float RESTITUTION = 0.8f; // bounce restitution
+
   public CircleRigid body;
 
   public DeathBall(float x, float y) {
@@ -55,32 +61,55 @@ public class DeathBall extends Sprite {
 
   @Override
   public void update(MyArrayList<Sprite> sprites, float dt, boolean keys[]) {
-    boolean x_collides = false;
-    boolean y_collides = false;
+    applyForce(0, GRAVITY * dt); // gravity
+    applyDrag((float) Math.pow(DRAG_MULTIPLIER, dt / 0.16f));
+    
+    body.state.y += body.state.y_vel * dt;
+    
+    for (Sprite sprite : sprites) {
+      if (sprite == this) {
+        continue;
+      }
+      
+      if (sprite instanceof Platform platform) {
+        if (Collision.isColliding(this, platform)) {
+          // bounce off the platform
+          if (Math.abs(body.state.y_vel) > 10f)
+            Util.playSound("boing.wav");
+          if (body.state.y_vel > 0)
+            body.state.y = platform.body.upY() - RADIUS;
+          else
+            body.state.y = platform.body.downY() + RADIUS;
 
-    applyForce(0, 300f * dt); // gravity
-    applyDrag((float) Math.pow(0.99f, dt / 0.16f));
+          body.state.y_vel *= -RESTITUTION; // restitution
+          return;
+        }
+      }
+    }
+    
+    body.state.x += body.state.x_vel * dt;
 
     for (Sprite sprite : sprites) {
       if (sprite == this) {
         continue;
       }
-      if (sprite instanceof Platform) {
-        if (Collision.isColliding(
-            (Sprite) this.cloneWithOffset(body.state.x_vel * dt, 0), sprite)) {
-          x_collides = true;
+      
+      if (sprite instanceof Platform platform) {
+        if (Collision.isColliding(this, platform)) {
+          // bounce off the platform
+          if (Math.abs(body.state.x_vel) > 10f)
+            Util.playSound("boing.wav");
+          
+          if (body.state.x_vel > 0)
+            body.state.x = platform.body.leftX() - RADIUS;
+          else
+            body.state.x = platform.body.rightX() + RADIUS;
+
+          body.state.x_vel *= -RESTITUTION; // restitution
+          return;
         }
-        if (Collision.isColliding(
-            (Sprite) this.cloneWithOffset(0, body.state.y_vel * dt), sprite)) {
-          y_collides = true;
-        }
-        if (x_collides || y_collides) break;
       }
     }
-    if (x_collides) body.state.x_vel *= -1;
-    if (y_collides) body.state.y_vel *= -1;
-    body.state.x += body.state.x_vel * dt;
-    body.state.y += body.state.y_vel * dt;
   }
 
   @Override
