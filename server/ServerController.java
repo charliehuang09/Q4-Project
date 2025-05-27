@@ -110,7 +110,7 @@ public class ServerController {
     playerInfos.put(playerId, new PlayerInfo(clientName, Team.NONE, false));
     
     // Add new placeholder player to the server's game
-    game.addPlayer(playerId, new Player(0, 0, clientName, Team.NONE));
+    game.addPlayer(playerId, new Player(0, 0, clientName, Team.NONE, game.deathBall));
 
     // Send the client all of the other players, and send the new player to all of the other clients
     for (Integer otherPlayerId : playerInfos.keySet()) {

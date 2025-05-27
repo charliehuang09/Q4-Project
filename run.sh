@@ -1,4 +1,3 @@
+find . -name "*.java" -print0 | xargs -0 javac
 java Server &
-SERVER_PID=$!
 java Client
-kill "$SERVER_PID"

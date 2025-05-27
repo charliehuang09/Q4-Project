@@ -29,6 +29,7 @@ public class ClientController {
   
   public int id;
   private Game game;
+  public static boolean[] keys = new boolean[5];
 
   public ClientController(ClientPacketManager packetManager, ClientScreen screen) {
     this.packetManager = packetManager;
@@ -89,6 +90,11 @@ public class ClientController {
   public void addPlayer(int playerId, Player player) {
     System.out.println("[client:controller] Adding player " + playerId + " - " + player.name);
     game.addPlayer(playerId, player);
+  }
+
+  public void addPlayer(int playerId, String name, String team) {
+    Player player = new Player(0, 0, name, Team.valueOf(team), game.deathBall);
+    addPlayer(playerId, player);
   }
 
   public void removePlayer(int playerId) {

@@ -10,8 +10,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import game.Game;
-import model.Player;
-import model.Team;
 import network.Packet;
 import network.PacketManager;
 import network.packets.AddPlayerPacket;
@@ -56,7 +54,7 @@ public class ClientPacketManager extends PacketManager {
     } else if (packet instanceof SetPlayerIdPacket sip) {
       controller.setId(sip.playerId);
     } else if (packet instanceof AddPlayerPacket app) {
-      controller.addPlayer(app.playerId, new Player(0, 0, app.name, Team.valueOf(app.team)));
+      controller.addPlayer(app.playerId, app.name, app.team);
     } else if (packet instanceof RemovePlayerPacket rpp) {
       controller.removePlayer(rpp.playerId);
     } else {

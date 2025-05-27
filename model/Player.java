@@ -6,20 +6,23 @@ import util.Util;
 
 public class Player extends Sprite {
   static final float RADIUS = 15;
+
   public String name;
   public Team team;
   public CircleRigid body;
+  public Graple graple;
 
-  public Player(float x, float y, String name, Team team) {
+  public Player(float x, float y, String name, Team team, DeathBall deathBall) {
     this.name = name;
     this.team = team;
     this.body = new CircleRigid(x, y, RADIUS);
+    this.graple = new Graple(this, deathBall);
   }
 
   public Player cloneWithOffset(float x_offset, float y_offset) {
-    Player newPlayer = new Player(body.state.x, body.state.y, name, team);
-    newPlayer.body.state.x_vel = body.state.x_vel + x_offset;
-    newPlayer.body.state.y_vel = body.state.y_vel + y_offset;
+    Player newPlayer = new Player(body.state.x, body.state.y, name, team, graple.deathBall);
+    newPlayer.body.state.x_vel += x_offset;
+    newPlayer.body.state.y_vel += y_offset;
     return newPlayer;
   }
 
@@ -36,16 +39,10 @@ public class Player extends Sprite {
       g.setColor(Color.BLUE);
     }
     g.fillOval(
-      (int) (body.state.x - (RADIUS)),
-      (int) (body.state.y - (RADIUS)),
-      (int) RADIUS * 2,
-      (int) RADIUS * 2);
-
-    // Draw the name of the player
-    g.setColor(Color.BLACK);
-    g.setFont(new Font("Arial", Font.BOLD, 12));
-    int width = g.getFontMetrics().stringWidth(name);
-    g.drawString(name, (int) (body.state.x - width / 2), (int) (body.state.y - RADIUS * 1.2f));
+        (int) (body.state.x - RADIUS),
+        (int) (body.state.y - RADIUS),
+        (int) (RADIUS * 2),
+        (int) (RADIUS * 2));
   }
 
   @Override
@@ -60,7 +57,20 @@ public class Player extends Sprite {
   }
 
   @Override
-  public void update(MyArrayList<Sprite> sprites, float dt) {
+  public void update(MyArrayList<Sprite> sprites, float dt, boolean keys[]) {
+    if (keys[0]) {
+      applyForce(0, -200f * dt);
+    }
+    if (keys[1]) {
+      applyForce(-200f * dt, 0f);
+    }
+    if (keys[2]) {
+      applyForce(0, 200f * dt);
+    }
+    if (keys[3]) {
+      applyForce(200f * dt, 0f);
+    }
+    
     applyForce(0, 300f * dt); // gravity
     applyDrag((float) Math.pow(0.99f, dt / 0.16f));
 
@@ -87,6 +97,8 @@ public class Player extends Sprite {
     } catch (Exception e) {
       e.printStackTrace();
     }
+
+    graple.update(dt, keys[4]);
   }
 
   @Override

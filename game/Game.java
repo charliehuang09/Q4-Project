@@ -5,6 +5,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import client.ClientController;
+import model.DeathBall;
 import model.Platform;
 import model.Player;
 import model.Sprite;
@@ -15,6 +17,7 @@ import struct.MyHashMap;
 public class Game {
   public int id = -1;
   public Player player;
+  public DeathBall deathBall;
   public MyHashMap<Integer, Player> players = new MyHashMap<>();
   public MyArrayList<Sprite> sprites = new MyArrayList<>();
 
@@ -76,11 +79,19 @@ public class Game {
   }
 
   public void initPlayer() {
-    this.player = new Player(100, 10, "PlayerName", Team.NONE);
+    this.player = new Player(100, 10, "PlayerName", Team.NONE, deathBall);
   }
 
   private void initGame() {
-    this.sprites.add(new Platform(100, 200, 1000, 50));
+    this.sprites = new MyArrayList<Sprite>();
+
+    this.deathBall = new DeathBall(300, 80);
+
+    // Platform
+    this.sprites.add(new Platform(500, 445, 1000, 100));
+    this.sprites.add(new Platform(500, -100, 1000, 100));
+    this.sprites.add(new Platform(0, 0, 100, 600));
+    this.sprites.add(new Platform(1000, 0, 100, 600));
   }
 
   public void start() {
@@ -95,6 +106,8 @@ public class Game {
   }
 
   public void update() {
+    boolean[] keys = ClientController.keys;
+
     if (time == 0) {
       time = System.currentTimeMillis();
       return;
@@ -104,7 +117,8 @@ public class Game {
     float dt = (float) (ct - time) / 1000f;
     time = ct;
 
-    player.update(sprites, dt);
+    player.update(sprites, dt, keys);
+    deathBall.update(sprites, dt, keys);
   }
 
   public void draw(Graphics g) {
@@ -116,6 +130,7 @@ public class Game {
       player.draw(g);
     }
 
+    deathBall.draw(g);
     player.draw(g);
   }
 }

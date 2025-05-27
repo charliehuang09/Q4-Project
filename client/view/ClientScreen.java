@@ -1,24 +1,22 @@
 package client.view;
 
+import client.ClientController;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.event.ActionListener;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import javax.swing.*;
-
-import client.ClientController;
 
 public class ClientScreen extends JPanel implements ActionListener {
   private JPanel mainPanel;
   private CardLayout cardLayout;
-  
+
   private ClientController controller;
 
   private ScheduledExecutorService executor;
-  
+
   public ClientScreen() {
     JFrame frame = new JFrame("Client Screen");
     cardLayout = new CardLayout();
@@ -28,11 +26,14 @@ public class ClientScreen extends JPanel implements ActionListener {
     MenuScreen menuScreen = new MenuScreen(this);
     LobbyScreen lobbyScreen = new LobbyScreen(this);
     GameScreen gameScreen = new GameScreen(this);
+    // gameScreen.addKeyListener(gameScreen);
+    // gameScreen.setFocusable(true);
 
     mainPanel.add(menuScreen, "menuScreen");
     mainPanel.add(lobbyScreen, "lobbyScreen");
     mainPanel.add(gameScreen, "gameScreen");
     frame.add(mainPanel);
+    frame.setFocusable(true);
 
     showScreen("menuScreen"); // Initial screen remains the same
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -41,7 +42,6 @@ public class ClientScreen extends JPanel implements ActionListener {
 
     this.executor = Executors.newSingleThreadScheduledExecutor();
     this.executor.scheduleAtFixedRate(mainPanel::repaint, 0, 1000 / 60, TimeUnit.MILLISECONDS);
-
   }
 
   public void setController(ClientController controller) {
@@ -65,6 +65,5 @@ public class ClientScreen extends JPanel implements ActionListener {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
-  }
+  public void actionPerformed(ActionEvent e) {}
 }

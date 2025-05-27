@@ -49,6 +49,9 @@ public class Collision {
     if (sprite1 instanceof Platform p1 && sprite2 instanceof Platform p2) {
       return isColliding(p1.body, p2.body);
     }
+    if (sprite1 instanceof DeathBall d1 && sprite2 instanceof Platform p2) {
+      return isColliding(d1.body, p2.body);
+    }
     return false;
   }
 }

@@ -37,7 +37,7 @@ public class Platform extends Sprite {
   }
 
   @Override
-  public void update(MyArrayList<Sprite> sprites, float dt) {}
+  public void update(MyArrayList<Sprite> sprites, float dt, boolean keys[]) {}
 
   @Override
   public boolean isColliding(Sprite sprite) {
