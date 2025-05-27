@@ -6,27 +6,30 @@ import java.io.IOException;
 
 import network.Packet;
 
-public class SwitchStatePacket extends Packet {
-  public String newState;
+public class SetPlayerIdPacket extends Packet {
+  public int playerId;
 
-  public SwitchStatePacket() {}
+  // for registerPacket compatibility
+  public SetPlayerIdPacket() {
+    this.playerId = -1;
+  }
 
-  public SwitchStatePacket(String newState) {
-    this.newState = newState;
+  public SetPlayerIdPacket(int playerId) {
+    this.playerId = playerId;
   }
 
   @Override
   public byte getId() {
-    return 0x5;
+    return 0x6;
   }
 
   @Override
   public void read(DataInput in) throws IOException {
-    this.newState = in.readUTF();
+    this.playerId = in.readInt();
   }
 
   @Override
   public void writeBody(DataOutput out) throws IOException {
-    out.writeUTF(newState);
+    out.writeInt(playerId);
   }
 }

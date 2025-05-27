@@ -1,12 +1,21 @@
 package client;
 
+import java.awt.Graphics;
+
 import client.view.ClientScreen;
+import game.Game;
+import model.Player;
+import model.Team;
 import network.Packet;
+import network.packets.JoinRequestPacket;
 import network.packets.ReadyUpPacket;
-import network.packets.SwitchStatePacket;
 import network.packets.TeamSelectionPacket;
 
 public class ClientController {
+  public static final boolean DEBUG = false;
+  static void dprintln(String message) {
+    if (DEBUG) System.out.println(message);
+  }
 
   // GameState Enum
   public enum GameState {
@@ -14,8 +23,13 @@ public class ClientController {
     LOBBY,
     IN_GAME
   }
+  
   private ClientPacketManager packetManager;
   private ClientScreen screen;
+  
+  public int id;
+  private Game game;
+  public static boolean[] keys = new boolean[5];
 
   public ClientController(ClientPacketManager packetManager, ClientScreen screen) {
     this.packetManager = packetManager;
@@ -23,49 +37,37 @@ public class ClientController {
 
     this.packetManager.setController(this);
     this.screen.setController(this);
+
+    this.game = new Game();
+    game.initPlayer();
   }
 
-  // TODO: put this back in NetworkManager
-  public void handlePacket(Packet packet) {
-    if (packet instanceof SwitchStatePacket ssp) {
-      handleSwitchStatePacket(ssp);
-    } else if (packet instanceof TeamSelectionPacket tsp) {
-      handleTeamSelectionPacket(tsp);
+  public void setId(int id) {
+    this.id = id;
+    this.game.setId(id);
+    System.out.println("[client:controller] Set ID: " + id);
+  }
+
+  public void selectTeam(int playerId, String team) {
+    if (playerId == id) {
+      System.out.println("[client:controller] Setting own team to: " + team);
+      game.getPlayer().team = Team.valueOf(team);
     } else {
-      System.out.println("[client:controller] Unknown packet type: " + packet.getClass().getName());
+      game.updatePlayerTeam(playerId, Team.valueOf(team));
     }
   }
-
-  private void handleSwitchStatePacket(SwitchStatePacket packet) {
-    if ("IN_GAME".equals(packet.getNewState())) {
-      setCurrentState(GameState.IN_GAME);
-      System.out.println("[client:controller] Switched to IN_GAME state.");
-    }
-  }
-
-  private void handleTeamSelectionPacket(TeamSelectionPacket packet) {
-    System.out.println("[client:controller] Team selected: " + packet.getTeam());
-  }
-
-  public void joinTeam(String team) {
-    // TODO: store team
+  
+  public void requestTeam(String team) {
     sendPacket(new TeamSelectionPacket(team));
+    game.getPlayer().team = Team.valueOf(team);
   }
 
   public void readyUp(boolean ready) {
     sendPacket(new ReadyUpPacket(ready));
   }
 
-  public void connect(String host, int port) {
-    try {
-      packetManager.connect(host, port);
-      setCurrentState(GameState.LOBBY);
-    } catch (Exception e) {
-      System.out.println("[client:controller] Can't connect to server: " + e.getMessage());
-    }
-  }
-
   public void setCurrentState(GameState state) {
+    System.out.println("[client:controller] Changing state to " + state);
     switch (state) {
       case MENU:
         screen.showScreen("menuScreen");
@@ -74,8 +76,56 @@ public class ClientController {
         screen.showScreen("lobbyScreen");
         break;
       case IN_GAME:
+        startGame();
         screen.showScreen("gameScreen");
         break;
+    }
+  }
+
+  public void startGame() {
+    game.start();
+    packetManager.startSending(game);
+  }
+
+  public void addPlayer(int playerId, Player player) {
+    System.out.println("[client:controller] Adding player " + playerId + " - " + player.name);
+    game.addPlayer(playerId, player);
+  }
+
+  public void addPlayer(int playerId, String name, String team) {
+    Player player = new Player(0, 0, name, Team.valueOf(team), game.deathBall);
+    addPlayer(playerId, player);
+  }
+
+  public void removePlayer(int playerId) {
+    System.out.println("[client:controller] Removing player " + playerId);
+    game.removePlayer(playerId);
+  }
+
+  public void updatePlayerPosition(int playerId, float x, float y) {
+    dprintln("[client:controller] Updating position for player " + playerId + " to (" + x + ", " + y + ")");
+    game.updatePlayerPosition(playerId, x, y);
+  }
+
+  public void stopGame() {
+    game.stop();
+  }
+
+  public void drawGame(Graphics g) {
+    game.draw(g);
+  }
+
+  public void attemptConnect() {
+    connect("localhost", 31415);
+    sendPacket(new JoinRequestPacket("PlayerName")); // TODO: get player name from input
+  }
+
+  public void connect(String host, int port) {
+    try {
+      packetManager.connect(host, port);
+      setCurrentState(GameState.LOBBY);
+    } catch (Exception e) {
+      System.out.println("[client:controller] Can't connect to server: " + e.getMessage());
     }
   }
 

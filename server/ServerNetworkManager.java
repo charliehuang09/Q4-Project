@@ -5,7 +5,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
+import game.Game;
+import model.Player;
 import network.Packet;
 import network.packets.UpdatePosPacket;
 import network.packets.TeamSelectionPacket;
@@ -17,7 +21,8 @@ public class ServerNetworkManager {
   public static final int MAX_CONNECTIONS = 4;
 
   private ServerSocket serverSocket;
-  private ExecutorService executor;
+  private ExecutorService receivingExecutor;
+  private ScheduledExecutorService sendingExecutor;
   private int lastConnectionId = 0;
   private MyArrayList<IndividualPacketManager> connectionManagers;
   private MyArrayList<String> clientIps;
@@ -25,7 +30,8 @@ public class ServerNetworkManager {
   private ServerController controller;
 
   public ServerNetworkManager() {
-    executor = Executors.newFixedThreadPool(MAX_CONNECTIONS);
+    receivingExecutor = Executors.newFixedThreadPool(MAX_CONNECTIONS);
+    sendingExecutor = Executors.newScheduledThreadPool(1);
     connectionManagers = new MyArrayList<>();
     clientIps = new MyArrayList<>();
   }
@@ -34,25 +40,34 @@ public class ServerNetworkManager {
     this.controller = controller;
   }
 
+  public void sendPacket(Packet packet, int playerId) {
+    ServerController.dprintln("[server:network] Sending " + packet.getId() + " to client " + playerId);
+    for (IndividualPacketManager ipm : connectionManagers) {
+      if (ipm.id == playerId) {
+        ipm.sendPacket(packet);
+        return;
+      }
+    }
+    System.out.println("[server:network] Client not found: " + playerId);
+  }
+
   public void broadcast(Packet packet) {
     connectionManagers.forEach(ipm -> ipm.sendPacket(packet));
   }
 
   public void onReceive(Packet packet, int playerId) {
-    System.out.println("[server:network] Received " + packet.getId());
+    ServerController.dprintln("[server:network] Received " + packet.getId());
 
     if (packet instanceof JoinRequestPacket jrp) {
-      System.out.println("[server:network] Client joined: " + jrp.clientName);
+      controller.handleJoinRequest(playerId, jrp.clientName);
     } else if (packet instanceof TeamSelectionPacket tsp) {
-      System.out.println("[server:network] Team selected: " + tsp.getTeam());
-
-      controller.handleTeamSelection(playerId, tsp.getTeam());
+      controller.handleTeamSelection(playerId, tsp.team);
     } else if (packet instanceof ReadyUpPacket rup) {
-      System.out.println("[server:network] Ready status: " + rup.isReady());
-
-      controller.handleReadyStatus(playerId, rup.isReady());
-    } else if (packet instanceof @SuppressWarnings("unused") UpdatePosPacket upp) {
-      
+      controller.handleReadyStatus(playerId, rup.isReady);
+    } else if (packet instanceof UpdatePosPacket upp) {
+      controller.updatePlayerPosition(upp.playerId, upp.x, upp.y);
+    } else {
+      System.out.println("[server:network] Unknown packet type: " + packet.getId());
     }
   }
 
@@ -64,13 +79,14 @@ public class ServerNetworkManager {
 
   public void removeConnection(IndividualPacketManager ipm) {
     System.out.println("[server:network] Client disconnected: " + ipm.socket.getInetAddress().getHostAddress());
+    connectionManagers.remove(ipm);
+    controller.onDisconnect(ipm.id);
     clientIps.remove(ipm.socket.getInetAddress().getHostAddress());
     controller.updateIPs(clientIps);
-    connectionManagers.remove(ipm);
   }
 
-  public void start(int port) throws IOException {
-    executor.submit(() -> {
+  public void startReceiving(int port) throws IOException {
+    receivingExecutor.submit(() -> {
       try {
         serverSocket = new ServerSocket(port);
 
@@ -89,5 +105,19 @@ public class ServerNetworkManager {
         disconnect();
       }
     });
+  }
+
+  public void startSending(Game game) {
+    sendingExecutor.scheduleAtFixedRate(() -> {
+      if (controller.getGameState() != ServerController.GameState.IN_GAME) {
+        return;
+      }
+      for (Integer id : game.players.keySet()) {
+        Player player = game.players.get(id);
+        ServerController.dprintln("[server:network] Sending position update for player " + id + ": " + player.body.state.x + ", " + player.body.state.y);
+        UpdatePosPacket upp = new UpdatePosPacket(id, player.body.state.x, player.body.state.y);
+        broadcast(upp);
+      }
+    }, 0, 1000 / 20, TimeUnit.MILLISECONDS);
   }
 }

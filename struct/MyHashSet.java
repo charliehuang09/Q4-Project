@@ -45,11 +45,16 @@ public class MyHashSet<E> implements Iterable<E> {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (Object obj : hashTable) {
-            if (obj != null) {
-                sb.append(obj).append("\n");
+        sb.append("[");
+        for (int i = 0; i < hashTable.length; i++) {
+            if (hashTable[i] != null) {
+                sb.append(hashTable[i].toString());
+                if (i < hashTable.length - 1) {
+                    sb.append(", ");
+                }
             }
         }
+        sb.append("]");
         return sb.toString();
     }
 

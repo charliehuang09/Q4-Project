@@ -6,28 +6,32 @@ import java.io.IOException;
 
 import network.Packet;
 
-public class TeamSelectionPacket extends Packet {
+public class SetTeamPacket extends Packet {
+  public int playerId;
   public String team;
 
-  public TeamSelectionPacket() {
+  public SetTeamPacket() {
   }
 
-  public TeamSelectionPacket(String team) {
+  public SetTeamPacket(int playerId, String team) {
+    this.playerId = playerId;
     this.team = team;
   }
 
   @Override
   public byte getId() {
-    return 0x3; // Unique ID for this packet
+    return 0x8; // Unique ID for this packet
   }
 
   @Override
   public void writeBody(DataOutput out) throws IOException {
+    out.writeInt(playerId);
     out.writeUTF(team);
   }
 
   @Override
   public void read(DataInput in) throws IOException {
+    this.playerId = in.readInt();
     this.team = in.readUTF();
   }
 }

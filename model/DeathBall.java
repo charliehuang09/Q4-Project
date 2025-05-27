@@ -58,6 +58,9 @@ public class DeathBall extends Sprite {
     boolean x_collides = false;
     boolean y_collides = false;
 
+    applyForce(0, 300f * dt); // gravity
+    applyDrag((float) Math.pow(0.99f, dt / 0.16f));
+
     for (Sprite sprite : sprites) {
       if (sprite == this) {
         continue;

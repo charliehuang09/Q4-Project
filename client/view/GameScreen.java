@@ -1,6 +1,5 @@
 package client.view;
 
-import game.Game;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -9,37 +8,32 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 
+import client.ClientController;
+
 public class GameScreen extends JPanel implements KeyListener {
   @SuppressWarnings("unused")
   private ClientScreen clientScreen;
 
-  private Game game;
   private boolean[] keys;
+  private ScheduledExecutorService executor;
 
   public GameScreen(ClientScreen clientScreen) {
     this.clientScreen = clientScreen;
 
-    this.game = new Game();
-
     this.setPreferredSize(new Dimension(1000, 450));
-    ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-    executor.scheduleAtFixedRate(this::update, 0, 50, TimeUnit.MILLISECONDS);
     addKeyListener(this);
     setFocusable(true);
-
+    
     this.keys = new boolean[5];
     for (int i = 0; i < keys.length; i++) {
       keys[i] = false;
     }
-
+    
     setFocusable(true); // Allow the panel to receive key events
     addKeyListener(this); // Register KeyListener
-    requestFocusInWindow();
-  }
-
-  private void update() {
-    game.update(1.0f, keys);
-    repaint();
+    
+    executor = Executors.newScheduledThreadPool(1);
+    executor.scheduleAtFixedRate(this::repaint, 0, 1000 / 60, TimeUnit.MILLISECONDS);
   }
 
   @Override
@@ -47,7 +41,9 @@ public class GameScreen extends JPanel implements KeyListener {
     // TODO Jeremy fix
     requestFocusInWindow();
     super.paintComponent(g);
-    game.draw(g);
+    
+    ClientController.keys = keys;
+    clientScreen.getController().drawGame(g);
   }
 
   @Override

@@ -25,10 +25,10 @@ public abstract class PacketManager {
   }
 
   public Packet receivePacket(DataInputStream in) throws IOException {
-    System.out.println("[network] Receiving packet...");
+    // System.out.println("[network] Receiving packet...");
     byte id = in.readByte();
     int timestamp = in.readInt();
-    System.out.println("[network] Received packet with ID: " + id + " and timestamp: " + timestamp);
+    // System.out.println("[network] Received packet with ID: " + id + " and timestamp: " + timestamp);
 
     try {
       Packet packet = packetMap.get(id).getDeclaredConstructor().newInstance();
@@ -40,7 +40,7 @@ public abstract class PacketManager {
     }
   }
 
-  public void sendPacket(Packet packet, DataOutputStream out) throws IOException {
+  public synchronized void sendPacket(Packet packet, DataOutputStream out) throws IOException {
     packet.write(out);
     out.flush();
   }

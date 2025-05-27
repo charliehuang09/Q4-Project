@@ -18,7 +18,7 @@ public class ClientScreen extends JPanel implements ActionListener {
   private ScheduledExecutorService executor;
 
   public ClientScreen() {
-    JFrame frame = new JFrame("Client");
+    JFrame frame = new JFrame("Client Screen");
     cardLayout = new CardLayout();
     mainPanel = new JPanel(cardLayout);
 

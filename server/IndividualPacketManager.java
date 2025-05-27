@@ -11,12 +11,13 @@ import network.Packet;
 import network.PacketManager;
 import network.packets.JoinRequestPacket;
 import network.packets.ReadyUpPacket;
+import network.packets.SetPlayerIdPacket;
 import network.packets.TeamSelectionPacket;
 import network.packets.UpdatePosPacket;
 
 public class IndividualPacketManager extends PacketManager {
 
-  private int id;
+  protected int id;
   protected Socket socket;
   protected DataInputStream in;
   protected DataOutputStream out;
@@ -30,6 +31,8 @@ public class IndividualPacketManager extends PacketManager {
     this.in = new DataInputStream(socket.getInputStream());
     this.out = new DataOutputStream(socket.getOutputStream());
     this.server = server;
+
+    sendPacket(new SetPlayerIdPacket(id));
 
     this.executor = Executors.newSingleThreadExecutor();
 
@@ -49,11 +52,10 @@ public class IndividualPacketManager extends PacketManager {
   }
 
   public void sendPacket(Packet packet) {
-    System.out.println("[server:network] Sending " + packet.getId() + " to client " + id);
     try {
       super.sendPacket(packet, out);
     } catch (IOException e) {
-      System.out.println("[server:network] Failed to sendPacket, disconnecting: " + e.getMessage());
+      System.out.println("[server:network] Failed to sendPacket " + packet.getId() + ", disconnecting: " + e.getMessage());
       disconnect();
     }
   }

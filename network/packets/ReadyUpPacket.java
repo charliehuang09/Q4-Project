@@ -7,7 +7,7 @@ import java.io.IOException;
 import network.Packet;
 
 public class ReadyUpPacket extends Packet {
-  private boolean isReady;
+  public boolean isReady;
 
   public ReadyUpPacket() {}
 
@@ -28,9 +28,5 @@ public class ReadyUpPacket extends Packet {
   @Override
   public void read(DataInput in) throws IOException {
     this.isReady = in.readBoolean();
-  }
-
-  public boolean isReady() {
-    return isReady;
   }
 }

@@ -2,24 +2,27 @@ package model;
 
 import java.awt.*;
 import struct.MyArrayList;
+import util.Util;
 
 public class Player extends Sprite {
-  static final float RADIUS = 30;
-  static final float MIDDLE = 500;
-  private Team team;
+  static final float RADIUS = 15;
+
+  public String name;
+  public Team team;
   public CircleRigid body;
   public Graple graple;
 
-  public Player(float x, float y, Team team, DeathBall deathBall) {
+  public Player(float x, float y, String name, Team team, DeathBall deathBall) {
+    this.name = name;
     this.team = team;
     this.body = new CircleRigid(x, y, RADIUS);
     this.graple = new Graple(this, deathBall);
   }
 
   public Player cloneWithOffset(float x_offset, float y_offset) {
-    Player newPlayer = new Player(body.state.x, body.state.y, team, null);
-    newPlayer.body.state.x += x_offset;
-    newPlayer.body.state.y += y_offset;
+    Player newPlayer = new Player(body.state.x, body.state.y, name, team, graple.deathBall);
+    newPlayer.body.state.x_vel += x_offset;
+    newPlayer.body.state.y_vel += y_offset;
     return newPlayer;
   }
 
@@ -40,8 +43,6 @@ public class Player extends Sprite {
         (int) (body.state.y - RADIUS),
         (int) (RADIUS * 2),
         (int) (RADIUS * 2));
-
-    graple.draw(g);
   }
 
   @Override
@@ -58,53 +59,44 @@ public class Player extends Sprite {
   @Override
   public void update(MyArrayList<Sprite> sprites, float dt, boolean keys[]) {
     if (keys[0]) {
-      applyForce(0, -2f * dt);
+      applyForce(0, -200f * dt);
     }
     if (keys[1]) {
-      applyForce(-2f * dt, 0f);
+      applyForce(-200f * dt, 0f);
     }
     if (keys[2]) {
-      applyForce(0, 2f * dt);
+      applyForce(0, 200f * dt);
     }
     if (keys[3]) {
-      applyForce(2f * dt, 0f);
+      applyForce(200f * dt, 0f);
     }
+    
+    applyForce(0, 300f * dt); // gravity
+    applyDrag((float) Math.pow(0.99f, dt / 0.16f));
 
-    boolean x_collides = false;
-    boolean y_collides = false;
-    Platform plt = null;
-
-    if (this.team == Team.RED) {
-      if (body.rightX() > MIDDLE) {
-        x_collides = true;
-      }
-    } else {
-      if (body.leftX() < MIDDLE) {
-        x_collides = true;
-      }
-    }
-
-    for (Sprite sprite : sprites) {
-      if (sprite == this) {
-        continue;
-      }
-      if (sprite instanceof Platform) {
-        plt = (Platform) sprite;
-        if (Collision.isColliding(
-            (Sprite) this.cloneWithOffset(body.state.x_vel * dt, 0), sprite)) {
-          x_collides = true;
-        }
-        if (Collision.isColliding(
-            (Sprite) this.cloneWithOffset(0, body.state.y_vel * dt), sprite)) {
-          y_collides = true;
-        }
-        if (x_collides || y_collides) break;
-      }
-    }
-    if (x_collides) body.state.x_vel *= -1;
-    if (y_collides) body.state.y_vel *= -1;
     body.state.x += body.state.x_vel * dt;
     body.state.y += body.state.y_vel * dt;
+
+    try {
+      for (Sprite sprite : sprites) {
+        if (sprite == this) {
+          continue;
+        }
+
+        if (sprite instanceof Platform platform) {
+          if (Collision.isColliding(this, platform)) {
+            // bounce off the platform
+            if (Math.abs(body.state.y_vel) > 10f)
+              Util.playSound("boing.wav");
+            body.state.y_vel *= -0.5f; // restitution
+            body.state.y = platform.body.upY() - RADIUS;
+            return;
+          }
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
     graple.update(dt, keys[4]);
   }
