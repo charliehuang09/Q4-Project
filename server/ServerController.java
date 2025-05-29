@@ -85,15 +85,29 @@ public class ServerController {
       }
 
       if (allReady) {
-        gameState = GameState.IN_GAME;
-
-        // Broadcast SwitchStatePacket to all clients
-        SwitchStatePacket switchStatePacket = new SwitchStatePacket("IN_GAME");
-        networkManager.broadcast(switchStatePacket);
-
         System.out.println("[server:controller] All players are ready. Starting the game!");
+        startGame();
       }
     }
+  }
+
+  public void startGame() {
+    for (Integer playerId : playerInfos.keySet()) {
+      PlayerInfo playerInfo = playerInfos.get(playerId);
+      
+      if (playerInfo.team == Team.NONE) {
+        // Assign a team if not already assigned
+        playerInfo.team = (Math.random() > 0.5) ? Team.RED : Team.BLUE;
+        game.updatePlayerTeam(playerId, playerInfo.team);
+        networkManager.sendPacket(new SetTeamPacket(playerId, playerInfo.team.toString()), playerId);
+      }
+    }
+
+    gameState = GameState.IN_GAME;
+    
+    // Broadcast SwitchStatePacket to all clients
+    SwitchStatePacket switchStatePacket = new SwitchStatePacket("IN_GAME");
+    networkManager.broadcast(switchStatePacket);
   }
 
   public void updatePlayerPosition(int playerId, float x, float y) {

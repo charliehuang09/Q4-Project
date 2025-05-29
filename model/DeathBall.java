@@ -1,15 +1,13 @@
 package model;
 
 import java.awt.*;
+
+import game.Game;
 import struct.MyArrayList;
 import util.Util;
 
 public class DeathBall extends Sprite {
   static final float RADIUS = 15;
-
-  private static final float GRAVITY = 150f; // gravity force
-  private static final float DRAG_MULTIPLIER = 0.99f; // drag multiplier
-  private static final float RESTITUTION = 0.8f; // bounce restitution
 
   public CircleRigid body;
 
@@ -61,10 +59,14 @@ public class DeathBall extends Sprite {
 
   @Override
   public void update(MyArrayList<Sprite> sprites, float dt, boolean keys[]) {
-    applyForce(0, GRAVITY * dt); // gravity
-    applyDrag((float) Math.pow(DRAG_MULTIPLIER, dt / 0.16f));
+    applyForce(0, Game.GRAVITY * dt); // gravity
+    applyDrag((float) Math.pow(Game.DRAG_MULTIPLIER, dt / 0.16f));
 
+    // Update both x and y before checking collisions
+    body.state.x += body.state.x_vel * dt;
     body.state.y += body.state.y_vel * dt;
+
+    boolean onGround = false; // Flag to track if the ball is on a platform
 
     for (Sprite sprite : sprites) {
       if (sprite == this) {
@@ -74,37 +76,48 @@ public class DeathBall extends Sprite {
       if (sprite instanceof Platform platform) {
         if (((Platform) sprite).deathBallCollideable) {
           if (Collision.isColliding(this, platform)) {
-            if (Math.abs(body.state.y_vel) > 10f) Util.playSound("boing.wav");
-            if (body.state.y_vel > 0) body.state.y = platform.body.upY() - RADIUS;
-            else body.state.y = platform.body.downY() + RADIUS;
+            if (body.state.y_vel > 0 && body.state.y - RADIUS < platform.body.upY()) {
+              // Colliding from above
+              body.state.y = platform.body.upY() - RADIUS; // Reposition
+              if (Math.abs(body.state.y_vel) > 10f) {
+                Util.playSound("boing.wav");
+              }
+              body.state.y_vel *= -Game.RESTITUTION; // Bounce
+              onGround = true; // Mark as on ground
+            } else if (body.state.y_vel < 0 && body.state.y + RADIUS > platform.body.downY()) {
+              // Colliding from below
+              body.state.y = platform.body.downY() + RADIUS; // Reposition
+              if (Math.abs(body.state.y_vel) > 10f) {
+                Util.playSound("boing.wav");
+              }
+              body.state.y_vel *= -Game.RESTITUTION; // Bounce
+            }
 
-            body.state.y_vel *= -RESTITUTION; // restitution
-            return;
+            if (body.state.x_vel > 0 && body.state.x - RADIUS < platform.body.leftX()) {
+              // Colliding from left
+              body.state.x = platform.body.leftX() - RADIUS; // Reposition
+              if (Math.abs(body.state.x_vel) > 10f) {
+                Util.playSound("boing.wav");
+              }
+              body.state.x_vel *= -Game.RESTITUTION; // Bounce
+            } else if (body.state.x_vel < 0 && body.state.x + RADIUS > platform.body.rightX()) {
+              // Colliding from right
+              body.state.x = platform.body.rightX() + RADIUS; // Reposition
+              if (Math.abs(body.state.x_vel) > 10f) {
+                Util.playSound("boing.wav");
+              }
+              body.state.x_vel *= -Game.RESTITUTION; // Bounce
+            }
           }
         }
       }
     }
 
-    body.state.x += body.state.x_vel * dt;
-
-    for (Sprite sprite : sprites) {
-      if (sprite == this) {
-        continue;
-      }
-
-      if (sprite instanceof Platform platform) {
-        if (((Platform) sprite).deathBallCollideable) {
-          if (Collision.isColliding(this, platform)) {
-            // bounce off the platform
-            if (Math.abs(body.state.x_vel) > 10f) Util.playSound("boing.wav");
-
-            if (body.state.x_vel > 0) body.state.x = platform.body.leftX() - RADIUS;
-            else body.state.x = platform.body.rightX() + RADIUS;
-
-            body.state.x_vel *= -RESTITUTION; // restitution
-            return;
-          }
-        }
+    if (onGround) {
+      // Apply some friction to horizontal velocity
+      body.state.x_vel *= Game.GROUND_FRICTION_MULTIPLIER; // e.g., 0.99 for some friction
+      if (Math.abs(body.state.x_vel) < 0.1f) { // Stop if very slow
+        body.state.x_vel = 0;
       }
     }
   }
