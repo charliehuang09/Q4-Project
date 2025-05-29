@@ -17,9 +17,11 @@ public class Player extends Sprite {
   public String name;
   public Team team;
   public CircleRigid body;
+  public boolean alive;
   public Graple graple;
 
   public Player(float x, float y, String name, Team team, DeathBall deathBall) {
+    this.alive = true;
     this.name = name;
     this.team = team;
     this.body = new CircleRigid(x, y, RADIUS);
@@ -40,6 +42,7 @@ public class Player extends Sprite {
 
   @Override
   public void draw(Graphics g) {
+    if (!alive) return;
     graple.draw(g);
 
     if (team == Team.RED) {
@@ -56,17 +59,20 @@ public class Player extends Sprite {
 
   @Override
   public void applyForce(float x, float y, float mass) {
+    if (!alive) return;
     body.state.x_vel += x;
     body.state.y_vel += y;
   }
 
   @Override
   public void applyForce(float x, float y) {
+    if (!alive) return;
     applyForce(x, y, body.state.mass);
   }
 
   @Override
   public void update(MyArrayList<Sprite> sprites, float dt, boolean keys[]) {
+    if (!alive) return;
     if (keys[0]) {
       applyForce(0, -MOVE_FORCE * dt);
     }
@@ -79,56 +85,52 @@ public class Player extends Sprite {
     if (keys[3]) {
       applyForce(MOVE_FORCE * dt, 0f);
     }
-    
+
     applyForce(0, GRAVITY * dt); // gravity
     applyDrag((float) Math.pow(DRAG_MULTIPLIER, dt / DT_STEP));
-    
+
     body.state.y += body.state.y_vel * dt;
-    
+
     for (Sprite sprite : sprites) {
       if (sprite == this) {
         continue;
       }
-      
+
       if (sprite instanceof Platform platform) {
         if (Collision.isColliding(this, platform)) {
           // bounce off the platform
-          if (Math.abs(body.state.y_vel) > 10f)
-            Util.playSound("boing.wav");
-          if (body.state.y_vel > 0)
-            body.state.y = platform.body.upY() - RADIUS;
-          else
-            body.state.y = platform.body.downY() + RADIUS;
+          if (Math.abs(body.state.y_vel) > 10f) Util.playSound("boing.wav");
+          if (body.state.y_vel > 0) body.state.y = platform.body.upY() - RADIUS;
+          else body.state.y = platform.body.downY() + RADIUS;
 
           body.state.y_vel *= -RESTITUTION; // restitution
           return;
         }
       }
     }
-    
+
     body.state.x += body.state.x_vel * dt;
 
     for (Sprite sprite : sprites) {
       if (sprite == this) {
         continue;
       }
-      
+
       if (sprite instanceof Platform platform) {
         if (Collision.isColliding(this, platform)) {
           // bounce off the platform
-          if (Math.abs(body.state.x_vel) > 10f)
-            Util.playSound("boing.wav");
-          
-          if (body.state.x_vel > 0)
-            body.state.x = platform.body.leftX() - RADIUS;
-          else
-            body.state.x = platform.body.rightX() + RADIUS;
+          if (Math.abs(body.state.x_vel) > 10f) Util.playSound("boing.wav");
+
+          if (body.state.x_vel > 0) body.state.x = platform.body.leftX() - RADIUS;
+          else body.state.x = platform.body.rightX() + RADIUS;
 
           body.state.x_vel *= -RESTITUTION; // restitution
           return;
         }
       }
     }
+
+    if (Collision.isColliding((Sprite) this, (Sprite) graple.deathBall)) alive = false;
 
     graple.update(dt, keys[4]);
   }

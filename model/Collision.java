@@ -6,6 +6,8 @@ public class Collision {
     float dy = circle1.state.y - circle2.state.y;
     float distanceSquared = (dx * dx) + (dy * dy);
     float radiiSum = circle1.radius + circle2.radius;
+    System.out.println(distanceSquared);
+    System.out.println(radiiSum * radiiSum);
     return distanceSquared < (radiiSum * radiiSum);
   }
 
@@ -49,9 +51,16 @@ public class Collision {
     if (sprite1 instanceof Platform p1 && sprite2 instanceof Platform p2) {
       return isColliding(p1.body, p2.body);
     }
+    if (sprite1 instanceof Player p1 && sprite2 instanceof DeathBall d2) {
+      return isColliding(p1.body, d2.body);
+    }
+    if (sprite1 instanceof DeathBall d1 && sprite2 instanceof Player p2) {
+      return isColliding(d1.body, p2.body);
+    }
     if (sprite1 instanceof DeathBall d1 && sprite2 instanceof Platform p2) {
       return isColliding(d1.body, p2.body);
     }
     return false;
   }
 }
+
