@@ -78,7 +78,7 @@ public class Game {
   }
 
   public void initPlayer() {
-    this.player = new Player(100, 10, "PlayerName", Team.NONE, deathBall);
+    this.player = new Player(100, 10, "PlayerName", Team.BLUE, deathBall);
   }
 
   private void initGame() {
@@ -118,6 +118,12 @@ public class Game {
 
     player.update(sprites, dt, keys);
     deathBall.update(sprites, dt, keys);
+    if (deathBall.redDeath()) {
+      if (player.team == Team.RED) player.alive = false;
+    }
+    if (deathBall.blueDeath()) {
+      if (player.team == Team.BLUE) player.alive = false;
+    }
   }
 
   public void draw(Graphics g) {

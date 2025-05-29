@@ -114,4 +114,12 @@ public class DeathBall extends Sprite {
     this.body.state.x_vel *= multiplier;
     this.body.state.y_vel *= multiplier;
   }
+
+  public boolean blueDeath() {
+    return body.state.x < -10;
+  }
+
+  public boolean redDeath() {
+    return body.state.x > 1010;
+  }
 }
