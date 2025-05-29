@@ -6,8 +6,6 @@ public class Collision {
     float dy = circle1.state.y - circle2.state.y;
     float distanceSquared = (dx * dx) + (dy * dy);
     float radiiSum = circle1.radius + circle2.radius;
-    System.out.println(distanceSquared);
-    System.out.println(radiiSum * radiiSum);
     return distanceSquared < (radiiSum * radiiSum);
   }
 
@@ -63,4 +61,3 @@ public class Collision {
     return false;
   }
 }
-

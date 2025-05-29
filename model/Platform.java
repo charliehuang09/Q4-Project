@@ -5,9 +5,11 @@ import struct.MyArrayList;
 
 public class Platform extends Sprite {
   public RectangleRigid body;
+  public boolean deathBallCollideable;
 
-  public Platform(float x, float y, float width, float height) {
+  public Platform(float x, float y, float width, float height, boolean deathBallCollideable) {
     this.body = new RectangleRigid(x, y, width, height);
+    this.deathBallCollideable = deathBallCollideable;
   }
 
   @Override

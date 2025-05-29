@@ -63,50 +63,47 @@ public class DeathBall extends Sprite {
   public void update(MyArrayList<Sprite> sprites, float dt, boolean keys[]) {
     applyForce(0, GRAVITY * dt); // gravity
     applyDrag((float) Math.pow(DRAG_MULTIPLIER, dt / 0.16f));
-    
+
     body.state.y += body.state.y_vel * dt;
-    
+
     for (Sprite sprite : sprites) {
       if (sprite == this) {
         continue;
       }
-      
-      if (sprite instanceof Platform platform) {
-        if (Collision.isColliding(this, platform)) {
-          // bounce off the platform
-          if (Math.abs(body.state.y_vel) > 10f)
-            Util.playSound("boing.wav");
-          if (body.state.y_vel > 0)
-            body.state.y = platform.body.upY() - RADIUS;
-          else
-            body.state.y = platform.body.downY() + RADIUS;
 
-          body.state.y_vel *= -RESTITUTION; // restitution
-          return;
+      if (sprite instanceof Platform platform) {
+        if (((Platform) sprite).deathBallCollideable) {
+          if (Collision.isColliding(this, platform)) {
+            if (Math.abs(body.state.y_vel) > 10f) Util.playSound("boing.wav");
+            if (body.state.y_vel > 0) body.state.y = platform.body.upY() - RADIUS;
+            else body.state.y = platform.body.downY() + RADIUS;
+
+            body.state.y_vel *= -RESTITUTION; // restitution
+            return;
+          }
         }
       }
     }
-    
+
     body.state.x += body.state.x_vel * dt;
 
     for (Sprite sprite : sprites) {
       if (sprite == this) {
         continue;
       }
-      
-      if (sprite instanceof Platform platform) {
-        if (Collision.isColliding(this, platform)) {
-          // bounce off the platform
-          if (Math.abs(body.state.x_vel) > 10f)
-            Util.playSound("boing.wav");
-          
-          if (body.state.x_vel > 0)
-            body.state.x = platform.body.leftX() - RADIUS;
-          else
-            body.state.x = platform.body.rightX() + RADIUS;
 
-          body.state.x_vel *= -RESTITUTION; // restitution
-          return;
+      if (sprite instanceof Platform platform) {
+        if (((Platform) sprite).deathBallCollideable) {
+          if (Collision.isColliding(this, platform)) {
+            // bounce off the platform
+            if (Math.abs(body.state.x_vel) > 10f) Util.playSound("boing.wav");
+
+            if (body.state.x_vel > 0) body.state.x = platform.body.leftX() - RADIUS;
+            else body.state.x = platform.body.rightX() + RADIUS;
+
+            body.state.x_vel *= -RESTITUTION; // restitution
+            return;
+          }
         }
       }
     }

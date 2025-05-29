@@ -1,11 +1,10 @@
 package game;
 
+import client.ClientController;
 import java.awt.Graphics;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import client.ClientController;
 import model.DeathBall;
 import model.Platform;
 import model.Player;
@@ -88,13 +87,13 @@ public class Game {
     this.deathBall = new DeathBall(300, 80);
 
     // Middle divider
-    this.sprites.add(new Platform(500, 0, 1, 800));
+    this.sprites.add(new Platform(500, 0, 1, 800, false));
 
     // Platform
-    this.sprites.add(new Platform(500, 445, 1000, 100));
-    this.sprites.add(new Platform(500, -100, 1000, 100));
-    this.sprites.add(new Platform(0, 0, 100, 600));
-    this.sprites.add(new Platform(1000, 0, 100, 600));
+    this.sprites.add(new Platform(500, 445, 1000, 100, true));
+    this.sprites.add(new Platform(500, -100, 1000, 100, true));
+    this.sprites.add(new Platform(1000, 0, 100, 600, true));
+    this.sprites.add(new Platform(0, 0, 100, 600, true));
   }
 
   public void start() {
