@@ -103,16 +103,19 @@ public class ServerController {
       }
     }
 
+    game.start();
     gameState = GameState.IN_GAME;
-    
+
     // Broadcast SwitchStatePacket to all clients
     SwitchStatePacket switchStatePacket = new SwitchStatePacket("IN_GAME");
     networkManager.broadcast(switchStatePacket);
   }
 
-  public void updatePlayerPosition(int playerId, float x, float y) {
+  public void updatePlayer(int playerId, float x, float y, boolean tethering, boolean alive) {
     if (gameState == GameState.IN_GAME) {
       game.updatePlayerPosition(playerId, x, y);
+      game.updatePlayerTethering(playerId, tethering);
+      game.updatePlayerAlive(playerId, alive);
       dprintln("[server:controller] Player " + playerId + " position updated to: " + x + ", " + y);
     }
   }

@@ -3,7 +3,7 @@ package model;
 import java.awt.Color;
 import java.awt.Graphics;
 
-class Graple {
+public class Graple {
   private float MAX_DISTANCE = 100.0f;
   public float grapleLength;
   public DeathBall deathBall;
@@ -26,7 +26,7 @@ class Graple {
                     * (deathBall.body.state.y - player.body.state.y));
   }
 
-  private void applyTetherForce() {
+  private void applyTetherForce(float dt) {
     float distance = getDistance();
     float x = deathBall.body.state.x - player.body.state.x;
     float y = deathBall.body.state.y - player.body.state.y;
@@ -36,7 +36,7 @@ class Graple {
     float ty = uy * grapleLength;
     float vx = x - tx;
     float vy = y - ty;
-    deathBall.applyForce(-vx * 0.9f, -vy * 0.9f);
+    deathBall.applyForce(-vx * 5.0f * dt, -vy * 5.0f * dt);
   }
 
   public void update(float dt, boolean on) {
@@ -53,7 +53,7 @@ class Graple {
     }
     if (active) {
       if (getDistance() > grapleLength) {
-        applyTetherForce();
+        applyTetherForce(dt);
       }
     }
   }

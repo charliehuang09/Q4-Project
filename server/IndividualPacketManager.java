@@ -13,7 +13,7 @@ import network.packets.JoinRequestPacket;
 import network.packets.ReadyUpPacket;
 import network.packets.SetPlayerIdPacket;
 import network.packets.TeamSelectionPacket;
-import network.packets.UpdatePosPacket;
+import network.packets.UpdatePlayerPacket;
 
 public class IndividualPacketManager extends PacketManager {
 
@@ -36,7 +36,7 @@ public class IndividualPacketManager extends PacketManager {
 
     this.executor = Executors.newSingleThreadExecutor();
 
-    registerPacket(UpdatePosPacket.class);
+    registerPacket(UpdatePlayerPacket.class);
     registerPacket(JoinRequestPacket.class);
     registerPacket(TeamSelectionPacket.class);
     registerPacket(ReadyUpPacket.class);
@@ -55,7 +55,8 @@ public class IndividualPacketManager extends PacketManager {
     try {
       super.sendPacket(packet, out);
     } catch (IOException e) {
-      System.out.println("[server:network] Failed to sendPacket " + packet.getId() + ", disconnecting: " + e.getMessage());
+      System.out
+          .println("[server:network] Failed to sendPacket " + packet.getId() + ", disconnecting: " + e.getMessage());
       disconnect();
     }
   }

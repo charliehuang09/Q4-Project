@@ -102,9 +102,20 @@ public class ClientController {
     game.removePlayer(playerId);
   }
 
-  public void updatePlayerPosition(int playerId, float x, float y) {
+  public void updatePlayer(int playerId, float x, float y, boolean tethering, boolean alive) {
+    if (playerId == id) {
+      return; // Don't update own position from server packets
+    }
+
     dprintln("[client:controller] Updating position for player " + playerId + " to (" + x + ", " + y + ")");
     game.updatePlayerPosition(playerId, x, y);
+    game.updatePlayerTethering(playerId, tethering);
+    game.updatePlayerAlive(playerId, alive);
+  }
+
+  public void updateDeathBall(float x, float y, float x_vel, float y_vel) {
+    dprintln("[client:controller] Updating death ball position to (" + x + ", " + y + ") with velocity (" + x_vel + ", " + y_vel + ")");
+    game.updateDeathBall(x, y, x_vel, y_vel);
   }
 
   public void stopGame() {

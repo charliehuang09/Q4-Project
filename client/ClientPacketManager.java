@@ -17,7 +17,8 @@ import network.packets.RemovePlayerPacket;
 import network.packets.SetPlayerIdPacket;
 import network.packets.SetTeamPacket;
 import network.packets.SwitchStatePacket;
-import network.packets.UpdatePosPacket;
+import network.packets.UpdateDeathBallPacket;
+import network.packets.UpdatePlayerPacket;
 
 public class ClientPacketManager extends PacketManager {
   protected Socket socket;
@@ -35,18 +36,19 @@ public class ClientPacketManager extends PacketManager {
 
     registerPacket(SwitchStatePacket.class);
     registerPacket(SetTeamPacket.class);
-    registerPacket(UpdatePosPacket.class);
+    registerPacket(UpdatePlayerPacket.class);
     registerPacket(SetPlayerIdPacket.class);
     registerPacket(AddPlayerPacket.class);
     registerPacket(RemovePlayerPacket.class);
+    registerPacket(UpdateDeathBallPacket.class);
   }
 
   @Override
   public void onReceive(Packet packet) {
     ClientController.dprintln("[client:network] Received " + packet.getId());
 
-    if (packet instanceof UpdatePosPacket upp) {
-      controller.updatePlayerPosition(upp.playerId, upp.x, upp.y);
+    if (packet instanceof UpdatePlayerPacket upp) {
+      controller.updatePlayer(upp.playerId, upp.x, upp.y, upp.tethering, upp.alive);
     } else if (packet instanceof SwitchStatePacket ssp) {
       controller.setCurrentState(ClientController.GameState.valueOf(ssp.newState));
     } else if (packet instanceof SetTeamPacket stp) {
@@ -57,6 +59,8 @@ public class ClientPacketManager extends PacketManager {
       controller.addPlayer(app.playerId, app.name, app.team);
     } else if (packet instanceof RemovePlayerPacket rpp) {
       controller.removePlayer(rpp.playerId);
+    } else if (packet instanceof UpdateDeathBallPacket udp) {
+      controller.updateDeathBall(udp.x, udp.y, udp.x_vel, udp.y_vel);
     } else {
       System.out.println("[client:controller] Unknown packet type: " + packet.getClass().getName());
     }
@@ -114,7 +118,8 @@ public class ClientPacketManager extends PacketManager {
 
   public void startSending(Game game) {
     receivingExecutor.scheduleAtFixedRate(() -> {
-      UpdatePosPacket upp = new UpdatePosPacket(controller.id, game.player.body.state.x, game.player.body.state.y);
+      UpdatePlayerPacket upp = new UpdatePlayerPacket(controller.id, game.player.body.state.x, game.player.body.state.y,
+          game.player.graple.active, game.player.alive);
       sendPacket(upp);
     }, 0, 1000 / 60, TimeUnit.MILLISECONDS);
   }

@@ -142,6 +142,10 @@ public class Player extends Sprite {
     }
 
     if (onGround) {
+      if (keys[0]) { // Up
+        applyForce(0, -Game.JUMP_FORCE * dt);
+      }
+
       // Apply some friction to horizontal velocity
       // This is a simplified example; often static/kinetic friction is used
       body.state.x_vel *= Game.GROUND_FRICTION_MULTIPLIER; // e.g., 0.9 for some friction
