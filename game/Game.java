@@ -15,6 +15,15 @@ import struct.MyHashMap;
 
 public class Game {
   public int id = -1;
+
+  public static final int FPS = 60; // frames per second
+  public static final float DT_STEP = 1000f / FPS; // time step for drag calculation
+  public static final float RESTITUTION = 0.8f; // bounce off platforms
+  public static final float DRAG_MULTIPLIER = 0.995f;
+  public static final float GROUND_FRICTION_MULTIPLIER = 0.99f; // friction when on ground
+  public static final float GRAVITY = 150f; // gravity force
+  public static final float MOVE_FORCE = 200f; // force applied when moving
+
   public Player player;
   public DeathBall deathBall;
   public MyHashMap<Integer, Player> players = new MyHashMap<>();
@@ -78,7 +87,7 @@ public class Game {
   }
 
   public void initPlayer() {
-    this.player = new Player(100, 10, "PlayerName", Team.BLUE, deathBall);
+    this.player = new Player(0, 0, "PlayerName", Team.NONE, deathBall);
   }
 
   private void initGame() {
@@ -97,6 +106,17 @@ public class Game {
   }
 
   public void start() {
+    // Put player in the right place based on their team
+    if (player != null) {
+      if (player.team == Team.BLUE) {
+        player.body.state.x = 100;
+        player.body.state.y = 400;
+      } else if (player.team == Team.RED) {
+        player.body.state.x = 900;
+        player.body.state.y = 400;
+      }
+    }
+
     executor.scheduleAtFixedRate(this::update, 0, 1000 / 60, TimeUnit.MILLISECONDS);
   }
 

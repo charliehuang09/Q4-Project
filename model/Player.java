@@ -1,18 +1,13 @@
 package model;
 
 import java.awt.*;
+
+import game.Game;
 import struct.MyArrayList;
 import util.Util;
 
 public class Player extends Sprite {
   static final float RADIUS = 15;
-
-  private static final int FPS = 60; // frames per second
-  private static final float DT_STEP = 1000f / FPS; // time step for drag calculation
-  private static final float RESTITUTION = 0.8f; // bounce off platforms
-  private static final float DRAG_MULTIPLIER = 0.995f;
-  private static final float GRAVITY = 150f; // gravity force
-  private static final float MOVE_FORCE = 200f; // force applied when moving
 
   public String name;
   public Team team;
@@ -42,7 +37,8 @@ public class Player extends Sprite {
 
   @Override
   public void draw(Graphics g) {
-    if (!alive) return;
+    if (!alive)
+      return;
     graple.draw(g);
 
     if (team == Team.RED) {
@@ -59,57 +55,46 @@ public class Player extends Sprite {
 
   @Override
   public void applyForce(float x, float y, float mass) {
-    if (!alive) return;
+    if (!alive)
+      return;
     body.state.x_vel += x;
     body.state.y_vel += y;
   }
 
   @Override
   public void applyForce(float x, float y) {
-    if (!alive) return;
+    if (!alive)
+      return;
     applyForce(x, y, body.state.mass);
   }
 
   @Override
   public void update(MyArrayList<Sprite> sprites, float dt, boolean keys[]) {
-    if (!alive) return;
-    if (keys[0]) {
-      applyForce(0, -MOVE_FORCE * dt);
-    }
-    if (keys[1]) {
-      applyForce(-MOVE_FORCE * dt, 0f);
-    }
-    if (keys[2]) {
-      applyForce(0, MOVE_FORCE * dt);
-    }
-    if (keys[3]) {
-      applyForce(MOVE_FORCE * dt, 0f);
+    if (!alive) {
+      return;
     }
 
-    applyForce(0, GRAVITY * dt); // gravity
-    applyDrag((float) Math.pow(DRAG_MULTIPLIER, dt / DT_STEP));
+    if (keys[0]) { // Up
+      applyForce(0, -Game.MOVE_FORCE * dt);
+    }
+    if (keys[1]) { // Left
+      applyForce(-Game.MOVE_FORCE * dt, 0f);
+    }
+    if (keys[2]) { // Down
+      applyForce(0, Game.MOVE_FORCE * dt);
+    }
+    if (keys[3]) { // Right
+      applyForce(Game.MOVE_FORCE * dt, 0f);
+    }
 
+    applyForce(0, Game.GRAVITY * dt); // gravity
+    applyDrag((float) Math.pow(Game.DRAG_MULTIPLIER, dt / Game.DT_STEP));
+
+    // Update both x and y before checking collisions
+    body.state.x += body.state.x_vel * dt;
     body.state.y += body.state.y_vel * dt;
 
-    for (Sprite sprite : sprites) {
-      if (sprite == this) {
-        continue;
-      }
-
-      if (sprite instanceof Platform platform) {
-        if (Collision.isColliding(this, platform)) {
-          // bounce off the platform
-          if (Math.abs(body.state.y_vel) > 10f) Util.playSound("boing.wav");
-          if (body.state.y_vel > 0) body.state.y = platform.body.upY() - RADIUS;
-          else body.state.y = platform.body.downY() + RADIUS;
-
-          body.state.y_vel *= -RESTITUTION; // restitution
-          return;
-        }
-      }
-    }
-
-    body.state.x += body.state.x_vel * dt;
+    boolean onGround = false; // Flag to track if the ball is on a platform
 
     for (Sprite sprite : sprites) {
       if (sprite == this) {
@@ -118,19 +103,56 @@ public class Player extends Sprite {
 
       if (sprite instanceof Platform platform) {
         if (Collision.isColliding(this, platform)) {
-          // bounce off the platform
-          if (Math.abs(body.state.x_vel) > 10f) Util.playSound("boing.wav");
+          if (body.state.y_vel > 0 && body.state.y - RADIUS < platform.body.upY()) {
+            // Colliding from above
+            body.state.y = platform.body.upY() - RADIUS; // Reposition
+            if (Math.abs(body.state.y_vel) > 10f) {
+              Util.playSound("boing.wav");
+            }
+            body.state.y_vel *= -Game.RESTITUTION; // Bounce
+            // If you want it to land, consider:
+            // if (Math.abs(body.state.y_vel) < THRESHOLD) body.state.y_vel = 0;
+            onGround = true; // Mark as on ground
+          } else if (body.state.y_vel < 0 && body.state.y + RADIUS > platform.body.downY()) {
+            // Colliding from below
+            body.state.y = platform.body.downY() + RADIUS; // Reposition
+            if (Math.abs(body.state.y_vel) > 10f) {
+              Util.playSound("boing.wav");
+            }
+            body.state.y_vel *= -Game.RESTITUTION; // Bounce
+          }
 
-          if (body.state.x_vel > 0) body.state.x = platform.body.leftX() - RADIUS;
-          else body.state.x = platform.body.rightX() + RADIUS;
-
-          body.state.x_vel *= -RESTITUTION; // restitution
-          return;
+          if (body.state.x_vel > 0 && body.state.x - RADIUS < platform.body.leftX()) {
+            // Colliding from left
+            body.state.x = platform.body.leftX() - RADIUS; // Reposition
+            if (Math.abs(body.state.x_vel) > 10f) {
+              Util.playSound("boing.wav");
+            }
+            body.state.x_vel *= -Game.RESTITUTION; // Bounce
+          } else if (body.state.x_vel < 0 && body.state.x + RADIUS > platform.body.rightX()) {
+            // Colliding from right
+            body.state.x = platform.body.rightX() + RADIUS; // Reposition
+            if (Math.abs(body.state.x_vel) > 10f) {
+              Util.playSound("boing.wav");
+            }
+            body.state.x_vel *= -Game.RESTITUTION; // Bounce
+          }
         }
       }
     }
 
-    if (Collision.isColliding((Sprite) this, (Sprite) graple.deathBall)) alive = false;
+    if (onGround) {
+      // Apply some friction to horizontal velocity
+      // This is a simplified example; often static/kinetic friction is used
+      body.state.x_vel *= Game.GROUND_FRICTION_MULTIPLIER; // e.g., 0.9 for some friction
+      if (Math.abs(body.state.x_vel) < 0.1f) { // Stop if very slow
+        body.state.x_vel = 0;
+      }
+    }
+
+    if (Collision.isColliding((Sprite) this, (Sprite) graple.deathBall)) {
+      alive = false;
+    }
 
     graple.update(dt, keys[4]);
   }
