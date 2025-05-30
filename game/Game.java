@@ -1,7 +1,5 @@
 package game;
 
-import client.ClientController;
-import java.awt.Graphics;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -13,8 +11,9 @@ import model.Team;
 import struct.MyArrayList;
 import struct.MyHashMap;
 
-public class Game {
-  public int id = -1;
+public abstract class Game {
+  public static final int HEIGHT = 600; // game height
+  public static final int WIDTH = 1000; // game width
 
   public static final int FPS = 60; // frames per second
   public static final float DT_STEP = 1000f / FPS; // time step for drag calculation
@@ -25,26 +24,15 @@ public class Game {
   public static final float MOVE_FORCE = 150f; // force applied when moving
   public static final float JUMP_FORCE = 5000f; // force applied when jumping
 
-  public Player player;
   public DeathBall deathBall;
   public MyHashMap<Integer, Player> players = new MyHashMap<>();
   public MyArrayList<Sprite> sprites = new MyArrayList<>();
 
   private ScheduledExecutorService executor;
-  private long time;
 
   public Game() {
-    initGame();
-
+    reset();
     executor = Executors.newScheduledThreadPool(1);
-  }
-
-  public void setId(int id) {
-    this.id = id;
-  }
-
-  public Player getPlayer() {
-    return this.player;
   }
 
   public void addSprite(Sprite sprite) {
@@ -101,6 +89,17 @@ public class Game {
     this.players.get(id).team = team;
   }
 
+  public void resetDeathBall() {
+    if (deathBall == null) {
+      deathBall = new DeathBall(500, 80);
+    } else {
+      deathBall.body.state.x = 500;
+      deathBall.body.state.y = 80;
+      deathBall.body.state.x_vel = 0;
+      deathBall.body.state.y_vel = 0;
+    }
+  }
+
   public void updateDeathBall(float x, float y, float xVel, float yVel) {
     this.deathBall.body.state.x = x;
     this.deathBall.body.state.y = y;
@@ -108,14 +107,10 @@ public class Game {
     this.deathBall.body.state.y_vel = yVel;
   }
 
-  public void initPlayer() {
-    this.player = new Player(0, 0, "PlayerName", Team.NONE, deathBall);
-  }
-
-  private void initGame() {
+  public void reset() {
     this.sprites = new MyArrayList<Sprite>();
 
-    this.deathBall = new DeathBall(500, 80);
+    resetDeathBall();
 
     // Middle divider
     this.sprites.add(new Platform(500, 0, 1, 800, false));
@@ -128,65 +123,13 @@ public class Game {
   }
 
   public void start() {
-    // Put player in the right place based on their team
-    if (player != null) {
-      if (player.team == Team.BLUE) {
-        player.body.state.x = 100;
-        player.body.state.y = 400;
-      } else if (player.team == Team.RED) {
-        player.body.state.x = 900;
-        player.body.state.y = 400;
-      }
-    }
-
+    reset();
     executor.scheduleAtFixedRate(this::update, 0, 1000 / 60, TimeUnit.MILLISECONDS);
   }
 
+  public abstract void update();
+
   public void stop() {
     executor.shutdown();
-  }
-
-  public void update() {
-    if (time == 0) {
-      time = System.currentTimeMillis();
-      return;
-    }
-  
-    long ct = System.currentTimeMillis();
-    float dt = (float) (ct - time) / 1000f;
-    time = ct;
-
-    if (player != null) {
-      // client-side game logic
-      boolean[] keys = ClientController.keys;
-  
-      player.update(sprites, dt, keys);
-      if (deathBall.redDeath()) {
-        if (player.team == Team.RED) player.alive = false;
-      }
-      if (deathBall.blueDeath()) {
-        if (player.team == Team.BLUE) player.alive = false;
-      }
-    } else {
-      // server-side game logic
-      deathBall.update(sprites, dt, null);
-      for (Player p : players.values()) {
-        if (!p.alive) continue; // Skip dead players
-        p.graple.update(dt, p.graple.active);
-      }
-    }
-  }
-
-  public void draw(Graphics g) {
-    for (Sprite sprite : sprites) {
-      sprite.draw(g);
-    }
-
-    for (Player player : players.values()) {
-      player.draw(g);
-    }
-
-    player.draw(g);
-    deathBall.draw(g);
   }
 }

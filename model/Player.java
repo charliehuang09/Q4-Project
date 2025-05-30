@@ -154,7 +154,11 @@ public class Player extends Sprite {
       }
     }
 
-    if (Collision.isColliding((Sprite) this, (Sprite) graple.deathBall)) {
+    if (Collision.isColliding(this, graple.deathBall)) {
+      alive = false;
+    }
+
+    if (body.state.y > Game.HEIGHT + RADIUS) {
       alive = false;
     }
 

@@ -9,16 +9,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import game.Game;
 import network.Packet;
 import network.PacketManager;
-import network.packets.AddPlayerPacket;
-import network.packets.RemovePlayerPacket;
-import network.packets.SetPlayerIdPacket;
-import network.packets.SetTeamPacket;
-import network.packets.SwitchStatePacket;
-import network.packets.UpdateDeathBallPacket;
-import network.packets.UpdatePlayerPacket;
+import network.packets.*;
 
 public class ClientPacketManager extends PacketManager {
   protected Socket socket;
@@ -41,6 +34,7 @@ public class ClientPacketManager extends PacketManager {
     registerPacket(AddPlayerPacket.class);
     registerPacket(RemovePlayerPacket.class);
     registerPacket(UpdateDeathBallPacket.class);
+    registerPacket(ResetPacket.class);
   }
 
   @Override
@@ -61,6 +55,8 @@ public class ClientPacketManager extends PacketManager {
       controller.removePlayer(rpp.playerId);
     } else if (packet instanceof UpdateDeathBallPacket udp) {
       controller.updateDeathBall(udp.x, udp.y, udp.x_vel, udp.y_vel);
+    } else if (packet instanceof ResetPacket) {
+      controller.resetGame();
     } else {
       System.out.println("[client:controller] Unknown packet type: " + packet.getClass().getName());
     }
@@ -116,7 +112,7 @@ public class ClientPacketManager extends PacketManager {
     });
   }
 
-  public void startSending(Game game) {
+  public void startSending(ClientGame game) {
     receivingExecutor.scheduleAtFixedRate(() -> {
       UpdatePlayerPacket upp = new UpdatePlayerPacket(controller.id, game.player.body.state.x, game.player.body.state.y,
           game.player.graple.active, game.player.alive);

@@ -3,7 +3,6 @@ package client;
 import java.awt.Graphics;
 
 import client.view.ClientScreen;
-import game.Game;
 import model.Player;
 import model.Team;
 import network.Packet;
@@ -28,8 +27,8 @@ public class ClientController {
   private ClientScreen screen;
   
   public int id;
-  private Game game;
-  public static boolean[] keys = new boolean[5];
+  private ClientGame game;
+  public boolean[] keys = new boolean[5];
 
   public ClientController(ClientPacketManager packetManager, ClientScreen screen) {
     this.packetManager = packetManager;
@@ -38,13 +37,11 @@ public class ClientController {
     this.packetManager.setController(this);
     this.screen.setController(this);
 
-    this.game = new Game();
-    game.initPlayer();
+    this.game = new ClientGame(this);
   }
 
   public void setId(int id) {
     this.id = id;
-    this.game.setId(id);
     System.out.println("[client:controller] Set ID: " + id);
   }
 
@@ -83,8 +80,14 @@ public class ClientController {
   }
 
   public void startGame() {
+    System.out.println("[client:controller] Starting game");
     game.start();
     packetManager.startSending(game);
+  }
+
+  public void resetGame() {
+    System.out.println("[client:controller] Resetting game");
+    game.reset();
   }
 
   public void addPlayer(int playerId, Player player) {

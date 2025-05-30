@@ -6,20 +6,21 @@ import model.Team;
 import model.Player;
 import network.packets.AddPlayerPacket;
 import network.packets.RemovePlayerPacket;
+import network.packets.ResetPacket;
 import network.packets.SetTeamPacket;
 import network.packets.SwitchStatePacket;
 import struct.MyArrayList;
 import struct.MyHashMap;
 
-import game.Game;
-
 public class ServerController {
   public static final boolean DEBUG = false;
+
   static void dprintln(String message) {
-    if (DEBUG) System.out.println(message);
+    if (DEBUG)
+      System.out.println(message);
   }
 
-  private Game game;
+  private ServerGame game;
 
   private ServerNetworkManager networkManager;
   private ServerScreen screen;
@@ -48,7 +49,7 @@ public class ServerController {
     this.networkManager = networkManager;
     this.screen = screen;
 
-    this.game = new Game();
+    this.game = new ServerGame(this);
     this.networkManager.setController(this);
     this.screen.setController(this);
 
@@ -92,9 +93,10 @@ public class ServerController {
   }
 
   public void startGame() {
+    System.out.println("[server:controller] Starting game...");
     for (Integer playerId : playerInfos.keySet()) {
       PlayerInfo playerInfo = playerInfos.get(playerId);
-      
+
       if (playerInfo.team == Team.NONE) {
         // Assign a team if not already assigned
         playerInfo.team = (Math.random() > 0.5) ? Team.RED : Team.BLUE;
@@ -111,6 +113,14 @@ public class ServerController {
     networkManager.broadcast(switchStatePacket);
   }
 
+  public void nextRound() {
+    System.out.println("[server:controller] Starting next round...");
+    game.reset();
+
+    // Broadcast ResetPacket to all clients
+    networkManager.broadcast(new ResetPacket());
+  }
+
   public void updatePlayer(int playerId, float x, float y, boolean tethering, boolean alive) {
     if (gameState == GameState.IN_GAME) {
       game.updatePlayerPosition(playerId, x, y);
@@ -125,18 +135,20 @@ public class ServerController {
 
     // Broadcast player position updates
     playerInfos.put(playerId, new PlayerInfo(clientName, Team.NONE, false));
-    
+
     // Add new placeholder player to the server's game
     game.addPlayer(playerId, new Player(0, 0, clientName, Team.NONE, game.deathBall));
 
-    // Send the client all of the other players, and send the new player to all of the other clients
+    // Send the client all of the other players, and send the new player to all of
+    // the other clients
     for (Integer otherPlayerId : playerInfos.keySet()) {
       if (otherPlayerId == playerId) {
         continue; // Skip sending the player to themselves
       }
 
       PlayerInfo playerInfo = playerInfos.get(otherPlayerId);
-      networkManager.sendPacket(new AddPlayerPacket(otherPlayerId, playerInfo.name, playerInfo.team.toString()), playerId);
+      networkManager.sendPacket(new AddPlayerPacket(otherPlayerId, playerInfo.name, playerInfo.team.toString()),
+          playerId);
       networkManager.sendPacket(new AddPlayerPacket(playerId, clientName, "NONE"), otherPlayerId);
     }
 
@@ -150,7 +162,8 @@ public class ServerController {
 
     if (playerInfos.size() == 0) {
       gameState = GameState.LOBBY;
-      System.out.println("[server:controller] All players disconnected. Resetting game state to LOBBY.");
+      game.reset();
+      System.out.println("[server:controller] All players disconnected. Resetting game.");
     }
 
     System.out.println("[server:controller] Player " + playerId + " disconnected.");

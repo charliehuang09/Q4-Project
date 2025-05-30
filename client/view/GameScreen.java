@@ -8,10 +8,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 
-import client.ClientController;
-
 public class GameScreen extends JPanel implements KeyListener {
-  @SuppressWarnings("unused")
   private ClientScreen clientScreen;
 
   private boolean[] keys;
@@ -42,7 +39,7 @@ public class GameScreen extends JPanel implements KeyListener {
     requestFocusInWindow();
     super.paintComponent(g);
     
-    ClientController.keys = keys;
+    clientScreen.getController().keys = keys;
     clientScreen.getController().drawGame(g);
   }
 

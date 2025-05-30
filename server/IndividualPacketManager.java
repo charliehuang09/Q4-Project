@@ -9,11 +9,7 @@ import java.util.concurrent.Executors;
 
 import network.Packet;
 import network.PacketManager;
-import network.packets.JoinRequestPacket;
-import network.packets.ReadyUpPacket;
-import network.packets.SetPlayerIdPacket;
-import network.packets.TeamSelectionPacket;
-import network.packets.UpdatePlayerPacket;
+import network.packets.*;
 
 public class IndividualPacketManager extends PacketManager {
 
