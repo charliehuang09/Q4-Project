@@ -43,6 +43,7 @@ public class ClientScreen extends JPanel implements ActionListener {
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.pack();
     frame.setVisible(true);
+    frame.setResizable(false);
 
     this.executor = Executors.newSingleThreadScheduledExecutor();
     this.executor.scheduleAtFixedRate(mainPanel::repaint, 0, 1000 / 60, TimeUnit.MILLISECONDS);

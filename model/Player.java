@@ -41,6 +41,13 @@ public class Player extends Sprite {
       return;
     graple.draw(g);
 
+    g.setColor(new Color(0, 0, 0, 100)); // Semi-transparent background
+    g.fillOval(
+        (int) (body.state.x - RADIUS + 1),
+        (int) (body.state.y - RADIUS + 1),
+        (int) (RADIUS * 2 + 1),
+        (int) (RADIUS * 2 + 1));
+
     if (team == Team.RED) {
       g.setColor(Color.RED);
     } else {

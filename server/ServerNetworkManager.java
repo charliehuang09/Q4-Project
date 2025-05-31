@@ -83,6 +83,13 @@ public class ServerNetworkManager {
     controller.updateIPs(clientIps);
   }
 
+  public String getServerIP() {
+    if (serverSocket == null || serverSocket.isClosed()) {
+      return "Server not running";
+    }
+    return serverSocket.getInetAddress().getHostAddress() + ":" + serverSocket.getLocalPort();
+  }
+
   public void startReceiving(int port) throws IOException {
     receivingExecutor.submit(() -> {
       try {

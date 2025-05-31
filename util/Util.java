@@ -1,8 +1,10 @@
 package util;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -32,5 +34,15 @@ public class Util {
         }
       }
     }).start();
+  }
+
+  public static BufferedImage load(String filename) {
+    try {
+      return ImageIO.read(new File(filename));
+    } catch (IOException e) {
+      System.out.println(filename);
+      e.printStackTrace();
+      return null;
+    }
   }
 }

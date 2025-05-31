@@ -192,6 +192,10 @@ public class ServerController {
     screen.updateIPs(ips);
   }
 
+  public String getServerIP() {
+    return networkManager.getServerIP();
+  }
+
   public GameState getGameState() {
     return gameState;
   }

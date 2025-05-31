@@ -7,6 +7,7 @@ import model.Player;
 import model.Team;
 import network.Packet;
 import network.packets.*;
+import util.Util;
 
 public class ClientController {
   public static final boolean DEBUG = false;
@@ -79,6 +80,7 @@ public class ClientController {
       case GAME_OVER:
         stopGame();
         screen.updateScore(game.blueScore, game.redScore);
+        Util.playSound("victory.wav");
         screen.showScreen("gameOverScreen");
         break;
     }

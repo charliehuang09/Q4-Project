@@ -4,11 +4,15 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 
 import game.Game;
 import model.Player;
 import model.Sprite;
 import model.Team;
+import util.Util;
 
 public class ClientGame extends Game {
   private final ClientController controller;
@@ -16,9 +20,12 @@ public class ClientGame extends Game {
 
   private long time = 0;
 
+  private BufferedImage background;
+
   public ClientGame(ClientController controller) {
     super();
     this.controller = controller;
+    this.background = Util.load("./img/background.jpg");
   }
 
   public void initPlayer() {
@@ -33,10 +40,10 @@ public class ClientGame extends Game {
     player.alive = true;
     if (player.team == Team.BLUE) {
       player.body.state.x = 100;
-      player.body.state.y = 400;
+      player.body.state.y = 350;
     } else if (player.team == Team.RED) {
       player.body.state.x = 900;
-      player.body.state.y = 400;
+      player.body.state.y = 350;
     }
 
     player.body.state.x_vel = 0;
@@ -74,6 +81,11 @@ public class ClientGame extends Game {
   }
 
   public void draw(Graphics g) {
+    Graphics2D g2d = (Graphics2D) g;
+    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+    g.drawImage(background, 0, 0, null);
+
     for (Sprite sprite : sprites) {
       sprite.draw(g);
     }

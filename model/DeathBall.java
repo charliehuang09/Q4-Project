@@ -29,12 +29,25 @@ public class DeathBall extends Sprite {
 
   @Override
   public void draw(Graphics g) {
-    g.setColor(Color.GREEN);
+    g.setColor(new Color(0, 0, 0, 100)); // Semi-transparent background
+    g.fillOval(
+        (int) (body.state.x - RADIUS + 1),
+        (int) (body.state.y - RADIUS + 1),
+        (int) (RADIUS * 2 + 1),
+        (int) (RADIUS * 2 + 1));
+
+    g.setColor(Color.RED);
     g.fillOval(
         (int) (body.state.x - RADIUS),
         (int) (body.state.y - RADIUS),
         (int) (RADIUS * 2),
         (int) (RADIUS * 2));
+    g.setColor(Color.WHITE);
+    g.fillOval(
+        (int) (body.state.x - RADIUS + 3),
+        (int) (body.state.y - RADIUS + 3),
+        (int) (RADIUS * 2 - 6),
+        (int) (RADIUS * 2 - 6));
   }
 
   @Override

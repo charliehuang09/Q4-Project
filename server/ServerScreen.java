@@ -51,6 +51,7 @@ public class ServerScreen extends JPanel implements ActionListener {
 
   public void updateIPs(MyArrayList<String> ips) {
     StringBuilder sb = new StringBuilder();
+    sb.append("Server IP: ").append(controller.getServerIP()).append("\n");
     sb.append("Connected clients:\n");
     for (String ip : ips) {
       sb.append(" - ").append(ip).append("\n");
