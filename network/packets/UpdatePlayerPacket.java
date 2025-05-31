@@ -10,16 +10,18 @@ public class UpdatePlayerPacket extends Packet {
   public int playerId;
   public float x, y;
   public boolean tethering;
+  public float tetherLength;
   public boolean alive;
 
   // for registerPacket compatibility
   public UpdatePlayerPacket() {}
 
-  public UpdatePlayerPacket(int playerId, float x, float y, boolean tethering, boolean alive) {
+  public UpdatePlayerPacket(int playerId, float x, float y, boolean tethering, float tetherLength, boolean alive) {
     this.playerId = playerId;
     this.x = x;
     this.y = y;
     this.tethering = tethering;
+    this.tetherLength = tetherLength;
     this.alive = alive;
   }
 
@@ -34,6 +36,7 @@ public class UpdatePlayerPacket extends Packet {
     this.x = in.readFloat();
     this.y = in.readFloat();
     this.tethering = in.readBoolean();
+    this.tetherLength = in.readFloat();
     this.alive = in.readBoolean();
   }
 
@@ -43,6 +46,7 @@ public class UpdatePlayerPacket extends Packet {
     out.writeFloat(x);
     out.writeFloat(y);
     out.writeBoolean(tethering);
+    out.writeFloat(tetherLength);
     out.writeBoolean(alive);
   }
 }

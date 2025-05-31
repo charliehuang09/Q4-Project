@@ -66,7 +66,7 @@ public class ServerNetworkManager {
     } else if (packet instanceof ReadyUpPacket rup) {
       controller.handleReadyStatus(playerId, rup.isReady);
     } else if (packet instanceof UpdatePlayerPacket upp) {
-      controller.updatePlayer(upp.playerId, upp.x, upp.y, upp.tethering, upp.alive);
+      controller.updatePlayer(upp.playerId, upp.x, upp.y, upp.tethering, upp.tetherLength, upp.alive);
     } else {
       System.out.println("[server:network] Unknown packet type: " + packet.getId());
     }
@@ -120,7 +120,7 @@ public class ServerNetworkManager {
         ServerController.dprintln("[server:network] Sending position update for player " + id + ": "
             + player.body.state.x + ", " + player.body.state.y);
         UpdatePlayerPacket upp = new UpdatePlayerPacket(id, player.body.state.x, player.body.state.y,
-            player.graple.active, player.alive);
+            player.graple.active, player.graple.grapleLength, player.alive);
         broadcast(upp);
       }
 

@@ -64,13 +64,14 @@ public abstract class Game {
     this.players.get(id).body.state.y = y;
   }
 
-  public void updatePlayerTethering(int id, boolean tethering) {
+  public void updatePlayerTethering(int id, boolean tethering, float tetherLength) {
     if (!this.players.containsKey(id)) {
       System.out.println("[game] Player " + id + " not found.");
       return;
     }
 
     this.players.get(id).graple.active = tethering;
+    this.players.get(id).graple.grapleLength = tetherLength;
   }
 
   public void updatePlayerAlive(int id, boolean alive) {

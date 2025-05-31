@@ -40,7 +40,7 @@ public class ClientPacketManager extends PacketManager {
     ClientController.dprintln("[client:network] Received " + packet.getId());
 
     if (packet instanceof UpdatePlayerPacket upp) {
-      controller.updatePlayer(upp.playerId, upp.x, upp.y, upp.tethering, upp.alive);
+      controller.updatePlayer(upp.playerId, upp.x, upp.y, upp.tethering, upp.tetherLength, upp.alive);
     } else if (packet instanceof SwitchStatePacket ssp) {
       controller.setCurrentState(ClientController.GameState.valueOf(ssp.newState));
     } else if (packet instanceof SetTeamPacket stp) {
@@ -118,7 +118,7 @@ public class ClientPacketManager extends PacketManager {
     sendingExecutor = Executors.newScheduledThreadPool(1);
     sendingExecutor.scheduleAtFixedRate(() -> {
       UpdatePlayerPacket upp = new UpdatePlayerPacket(controller.id, game.player.body.state.x, game.player.body.state.y,
-          game.player.graple.active, game.player.alive);
+          game.player.graple.active, game.player.graple.grapleLength, game.player.alive);
       sendPacket(upp);
     }, 0, 1000 / 60, TimeUnit.MILLISECONDS);
   }

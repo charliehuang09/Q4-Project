@@ -14,7 +14,7 @@ public class Graple {
     this.player = player;
     this.deathBall = deathBall;
     this.active = false;
-    this.grapleLength = -1;
+    this.grapleLength = -1f;
   }
 
   private float getDistance() {
