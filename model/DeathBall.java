@@ -147,10 +147,10 @@ public class DeathBall extends Sprite {
   }
 
   public boolean blueDeath() {
-    return body.state.x < -10;
+    return body.state.x < -RADIUS;
   }
 
   public boolean redDeath() {
-    return body.state.x > 1010;
+    return body.state.x > 1000 + RADIUS;
   }
 }

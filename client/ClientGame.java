@@ -27,7 +27,7 @@ public class ClientGame extends Game {
   public ClientGame(ClientController controller) {
     super();
     this.controller = controller;
-    this.background = Util.load("./img/background.jpg");
+    this.background = Util.load("background.jpg");
   }
 
   public void initPlayer() {
