@@ -36,6 +36,7 @@ public class IndividualPacketManager extends PacketManager {
     registerPacket(JoinRequestPacket.class);
     registerPacket(TeamSelectionPacket.class);
     registerPacket(ReadyUpPacket.class);
+    registerPacket(CheatKeyPacket.class);
   }
 
   public DataOutputStream getOutputStream() {

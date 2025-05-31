@@ -6,9 +6,7 @@ import client.view.ClientScreen;
 import model.Player;
 import model.Team;
 import network.Packet;
-import network.packets.JoinRequestPacket;
-import network.packets.ReadyUpPacket;
-import network.packets.TeamSelectionPacket;
+import network.packets.*;
 
 public class ClientController {
   public static final boolean DEBUG = false;
@@ -97,11 +95,17 @@ public class ClientController {
     System.out.println("[client:controller] Stopping game");
     packetManager.stopSending();
     game.stop();
+    screen.resetKeys();
   }
 
   public void resetGame() {
     System.out.println("[client:controller] Resetting game");
     game.reset();
+  }
+
+  public void onCheatKeyPressed() {
+    System.out.println("[client:controller] Cheat key pressed");
+    sendPacket(new CheatKeyPacket());
   }
 
   public void addPlayer(int playerId, Player player) {

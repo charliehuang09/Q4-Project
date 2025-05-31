@@ -35,7 +35,7 @@ public class GameOverScreen extends JPanel {
   }
 
   public void updateScore(int blueScore, int redScore) {
-    String winnerName = blueScore >= 3 ? "Blue Team" : "Red Team";
+    String winnerName = blueScore > redScore ? "Blue Team" : "Red Team";
     winnerLabel.setText(winnerName + " won! (" + blueScore + " - " + redScore + ")");
   }
 }

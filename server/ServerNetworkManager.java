@@ -11,12 +11,8 @@ import java.util.concurrent.TimeUnit;
 import game.Game;
 import model.Player;
 import network.Packet;
-import network.packets.UpdatePlayerPacket;
-import network.packets.TeamSelectionPacket;
-import network.packets.UpdateDeathBallPacket;
-import network.packets.ReadyUpPacket;
+import network.packets.*;
 import struct.MyArrayList;
-import network.packets.JoinRequestPacket;
 
 public class ServerNetworkManager {
   public static final int MAX_CONNECTIONS = 4;
@@ -66,6 +62,8 @@ public class ServerNetworkManager {
       controller.handleReadyStatus(playerId, rup.isReady);
     } else if (packet instanceof UpdatePlayerPacket upp) {
       controller.updatePlayer(upp.playerId, upp.x, upp.y, upp.tethering, upp.tetherLength, upp.alive);
+    } else if (packet instanceof CheatKeyPacket) {
+      controller.gameOver();
     } else {
       System.out.println("[server:network] Unknown packet type: " + packet.getId());
     }

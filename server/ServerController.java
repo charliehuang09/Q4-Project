@@ -4,12 +4,7 @@ import java.io.IOException;
 
 import model.Team;
 import model.Player;
-import network.packets.AddPlayerPacket;
-import network.packets.RemovePlayerPacket;
-import network.packets.ResetPacket;
-import network.packets.SetScorePacket;
-import network.packets.SetTeamPacket;
-import network.packets.SwitchStatePacket;
+import network.packets.*;
 import struct.MyArrayList;
 import struct.MyHashMap;
 
@@ -132,10 +127,15 @@ public class ServerController {
     networkManager.broadcast(new ResetPacket());
     networkManager.broadcast(new SetScorePacket(game.blueScore, game.redScore));
     if (game.isGameOver()) {
-      System.out.println("[server:controller] Game over!");
-      stopGame();
-      networkManager.broadcast(new SwitchStatePacket("GAME_OVER"));
+      gameOver();
     }
+  }
+
+  public void gameOver() {
+    System.out.println("[server:controller] Game over!");
+    stopGame();
+    gameState = GameState.LOBBY;
+    networkManager.broadcast(new SwitchStatePacket("GAME_OVER"));
   }
 
   public void updatePlayer(int playerId, float x, float y, boolean tethering, float tetherLength, boolean alive) {

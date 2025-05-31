@@ -14,6 +14,7 @@ public class ClientScreen extends JPanel implements ActionListener {
   private CardLayout cardLayout;
 
   private LobbyScreen lobbyScreen; // for toggleReady to access
+  private GameScreen gameScreen; // for resetKeys to access
   private GameOverScreen gameOverScreen; // for updateScore to access
 
   private ClientController controller;
@@ -28,7 +29,7 @@ public class ClientScreen extends JPanel implements ActionListener {
     // Start Screen
     MenuScreen menuScreen = new MenuScreen(this);
     lobbyScreen = new LobbyScreen(this);
-    GameScreen gameScreen = new GameScreen(this);
+    gameScreen = new GameScreen(this);
     gameOverScreen = new GameOverScreen(this);
 
     mainPanel.add(menuScreen, "menuScreen");
@@ -61,6 +62,10 @@ public class ClientScreen extends JPanel implements ActionListener {
 
   public void updateScore(int blueScore, int redScore) {
     gameOverScreen.updateScore(blueScore, redScore);
+  }
+
+  public void resetKeys() {
+    gameScreen.resetKeys();
   }
 
   public void showScreen(String screen) {
