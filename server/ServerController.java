@@ -7,6 +7,7 @@ import model.Player;
 import network.packets.AddPlayerPacket;
 import network.packets.RemovePlayerPacket;
 import network.packets.ResetPacket;
+import network.packets.SetScorePacket;
 import network.packets.SetTeamPacket;
 import network.packets.SwitchStatePacket;
 import struct.MyArrayList;
@@ -127,6 +128,7 @@ public class ServerController {
 
     // Broadcast ResetPacket to all clients
     networkManager.broadcast(new ResetPacket());
+    networkManager.broadcast(new SetScorePacket(game.blueScore, game.redScore));
   }
 
   public void updatePlayer(int playerId, float x, float y, boolean tethering, boolean alive) {

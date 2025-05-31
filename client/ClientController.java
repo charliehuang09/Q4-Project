@@ -127,6 +127,11 @@ public class ClientController {
     game.updateDeathBall(x, y, x_vel, y_vel);
   }
 
+  public void setScore(int blueScore, int redScore) {
+    System.out.println("[client:controller] Setting score - Blue: " + blueScore + ", Red: " + redScore);
+    game.setScore(blueScore, redScore);
+  }
+
   public void drawGame(Graphics g) {
     game.draw(g);
   }

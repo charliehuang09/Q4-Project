@@ -1,5 +1,8 @@
 package client;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 
 import game.Game;
@@ -53,6 +56,12 @@ public class ClientGame extends Game {
   }
 
   @Override
+  public void start() {
+    super.start();
+    time = System.currentTimeMillis();
+  }
+
+  @Override
   public void update() {
     if (time == 0) {
       time = System.currentTimeMillis();
@@ -79,5 +88,17 @@ public class ClientGame extends Game {
 
     player.draw(g);
     deathBall.draw(g);
+
+    // Draw game score
+    g.setColor(Color.BLACK);
+    g.setFont(new Font("Arial", Font.BOLD, 30));
+    FontMetrics fm = g.getFontMetrics();
+    int width;
+    
+    width = fm.stringWidth(String.valueOf(blueScore));
+    g.drawString(String.valueOf(blueScore), 480 - width, 50);
+
+    width = fm.stringWidth(String.valueOf(redScore));
+    g.drawString(String.valueOf(redScore), 520, 50);
   }
 }

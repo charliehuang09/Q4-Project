@@ -5,10 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MenuScreen extends JPanel {
-  private ClientScreen clientScreen;
-
   public MenuScreen(ClientScreen clientScreen) {
-    this.clientScreen = clientScreen;
     this.setLayout(null);
 
     JLabel titleLabel = new JLabel("Bonk", SwingConstants.CENTER);

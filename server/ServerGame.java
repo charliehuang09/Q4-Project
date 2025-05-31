@@ -29,6 +29,12 @@ public class ServerGame extends Game {
   }
 
   @Override
+  public void start() {
+    super.start();
+    time = System.currentTimeMillis();
+  }
+
+  @Override
   public void update() {
     if (time == 0) {
       time = System.currentTimeMillis();
@@ -60,11 +66,11 @@ public class ServerGame extends Game {
       }
     }
 
-    if ((blueDead && anyBlue) || (redDead && anyRed)) {
+    if ((blueDead && anyBlue) || deathBall.blueDeath()) {
+      redScore++;
       controller.nextRound();
-    }
-
-    if (deathBall.redDeath() || deathBall.blueDeath()) {
+    } else if ((redDead && anyRed) || deathBall.redDeath()) {
+      blueScore++;
       controller.nextRound();
     }
   }

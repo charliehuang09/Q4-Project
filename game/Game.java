@@ -28,6 +28,9 @@ public abstract class Game {
   public MyHashMap<Integer, Player> players = new MyHashMap<>();
   public MyArrayList<Sprite> sprites = new MyArrayList<>();
 
+  public int blueScore = 0;
+  public int redScore = 0;
+
   private ScheduledExecutorService executor;
 
   public Game() {
@@ -106,6 +109,11 @@ public abstract class Game {
     this.deathBall.body.state.y_vel = yVel;
   }
 
+  public void setScore(int blueScore, int redScore) {
+    this.blueScore = blueScore;
+    this.redScore = redScore;
+  }
+
   public void reset() {
     System.out.println("[game] Resetting game state...");
     this.sprites = new MyArrayList<Sprite>();
@@ -124,6 +132,9 @@ public abstract class Game {
 
   public void start() {
     reset();
+
+    blueScore = 0;
+    redScore = 0;
 
     executor = Executors.newScheduledThreadPool(1);
     executor.scheduleAtFixedRate(this::update, 0, 1000 / 60, TimeUnit.MILLISECONDS);

@@ -32,6 +32,7 @@ public class ClientPacketManager extends PacketManager {
     registerPacket(RemovePlayerPacket.class);
     registerPacket(UpdateDeathBallPacket.class);
     registerPacket(ResetPacket.class);
+    registerPacket(SetScorePacket.class);
   }
 
   @Override
@@ -54,6 +55,8 @@ public class ClientPacketManager extends PacketManager {
       controller.updateDeathBall(udp.x, udp.y, udp.x_vel, udp.y_vel);
     } else if (packet instanceof ResetPacket) {
       controller.resetGame();
+    } else if (packet instanceof SetScorePacket ssp) {
+      controller.setScore(ssp.blueScore, ssp.redScore);
     } else {
       System.out.println("[client:controller] Unknown packet type: " + packet.getClass().getName());
     }
