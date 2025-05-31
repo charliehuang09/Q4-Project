@@ -22,6 +22,11 @@ public class DeathBall extends Sprite {
     return newDeathBall;
   }
 
+  public void setPosition(float x, float y) {
+    this.body.state.x = x;
+    this.body.state.y = y;
+  }
+
   @Override
   public boolean canMove() {
     return true;

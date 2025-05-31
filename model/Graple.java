@@ -61,10 +61,27 @@ public class Graple {
   public void draw(Graphics g) {
     if (!active) return;
     g.setColor(Color.BLACK);
+
+    int playerX, playerY;
+    int deathBallX, deathBallY;
+
+    if (player instanceof LerpedPlayer lp) {
+      playerX = (int) lp.lerpedX;
+      playerY = (int) lp.lerpedY;
+    } else {
+      playerX = (int) player.body.state.x;
+      playerY = (int) player.body.state.y;
+    }
+
+    if (deathBall instanceof LerpedDeathBall ldb) {
+      deathBallX = (int) ldb.lerpedX;
+      deathBallY = (int) ldb.lerpedY;
+    } else {
+      deathBallX = (int) deathBall.body.state.x;
+      deathBallY = (int) deathBall.body.state.y;
+    }
+
     g.drawLine(
-        (int) (player.body.state.x),
-        (int) (player.body.state.y),
-        (int) (deathBall.body.state.x),
-        (int) (deathBall.body.state.y));
+        playerX, playerY, deathBallX, deathBallY);
   }
 }

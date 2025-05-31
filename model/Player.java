@@ -30,6 +30,11 @@ public class Player extends Sprite {
     return newPlayer;
   }
 
+  public void setPosition(float x, float y) {
+    this.body.state.x = x;
+    this.body.state.y = y;
+  }
+
   @Override
   public boolean canMove() {
     return true;

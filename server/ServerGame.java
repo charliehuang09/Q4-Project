@@ -56,7 +56,7 @@ public class ServerGame extends Game {
       if (p.team == Team.BLUE) {
         anyBlue = true;
         if (p.alive) {
-         blueDead = false;
+          blueDead = false;
         }
       } else if (p.team == Team.RED) {
         anyRed = true;

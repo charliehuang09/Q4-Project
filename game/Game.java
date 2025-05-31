@@ -60,8 +60,7 @@ public abstract class Game {
       return;
     }
 
-    this.players.get(id).body.state.x = x;
-    this.players.get(id).body.state.y = y;
+    this.players.get(id).setPosition(x, y);
   }
 
   public void updatePlayerTethering(int id, boolean tethering, float tetherLength) {
@@ -96,16 +95,14 @@ public abstract class Game {
     if (deathBall == null) {
       deathBall = new DeathBall(500, 80);
     } else {
-      deathBall.body.state.x = 500;
-      deathBall.body.state.y = 80;
+      deathBall.setPosition(500, 80);
       deathBall.body.state.x_vel = 0;
       deathBall.body.state.y_vel = 0;
     }
   }
 
   public void updateDeathBall(float x, float y, float xVel, float yVel) {
-    this.deathBall.body.state.x = x;
-    this.deathBall.body.state.y = y;
+    this.deathBall.setPosition(x, y);
     this.deathBall.body.state.x_vel = xVel;
     this.deathBall.body.state.y_vel = yVel;
   }

@@ -9,6 +9,8 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 import game.Game;
+import model.LerpedDeathBall;
+import model.LerpedPlayer;
 import model.Player;
 import model.Sprite;
 import model.Team;
@@ -39,17 +41,31 @@ public class ClientGame extends Game {
 
     player.alive = true;
     if (player.team == Team.BLUE) {
-      player.body.state.x = 100;
-      player.body.state.y = 350;
+      player.setPosition(100, 350);
     } else if (player.team == Team.RED) {
-      player.body.state.x = 900;
-      player.body.state.y = 350;
+      player.setPosition(900, 350);
     }
 
     player.body.state.x_vel = 0;
     player.body.state.y_vel = 0;
 
     player.graple.active = false;
+  }
+
+  @Override
+  public void resetDeathBall() {
+    if (deathBall == null) {
+      deathBall = new LerpedDeathBall(500, 80);
+    } else {
+      deathBall.setPosition(500, 80);
+      deathBall.body.state.x_vel = 0;
+      deathBall.body.state.y_vel = 0;
+    }
+  }
+
+  @Override
+  public void addPlayer(int id, Player player) {
+    this.players.put(id, LerpedPlayer.fromPlayer(player));
   }
 
   @Override
@@ -102,7 +118,7 @@ public class ClientGame extends Game {
     g.setFont(new Font("Bahnschrift", Font.BOLD, 30));
     FontMetrics fm = g.getFontMetrics();
     int width;
-    
+
     width = fm.stringWidth(String.valueOf(blueScore));
     g.drawString(String.valueOf(blueScore), 480 - width, 50);
 
