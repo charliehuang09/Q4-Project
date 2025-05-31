@@ -18,6 +18,17 @@ public class ServerGame extends Game {
   }
 
   @Override
+  public void reset() {
+    super.reset();
+
+    // Reset players to avoid resetting multiple times
+    for (Player p : players.values()) {
+      p.alive = true;
+      p.graple.active = false;
+    }
+  }
+
+  @Override
   public void update() {
     if (time == 0) {
       time = System.currentTimeMillis();
