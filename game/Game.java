@@ -114,6 +114,10 @@ public abstract class Game {
     this.redScore = redScore;
   }
 
+  public boolean isGameOver() {
+    return blueScore >= 3 || redScore >= 3;
+  }
+
   public void reset() {
     System.out.println("[game] Resetting game state...");
     this.sprites = new MyArrayList<Sprite>();

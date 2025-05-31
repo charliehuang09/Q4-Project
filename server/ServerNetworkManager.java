@@ -62,7 +62,7 @@ public class ServerNetworkManager {
     if (packet instanceof JoinRequestPacket jrp) {
       controller.handleJoinRequest(playerId, jrp.clientName);
     } else if (packet instanceof TeamSelectionPacket tsp) {
-      controller.handleTeamSelection(playerId, tsp.team);
+      controller.selectTeam(playerId, tsp.team);
     } else if (packet instanceof ReadyUpPacket rup) {
       controller.handleReadyStatus(playerId, rup.isReady);
     } else if (packet instanceof UpdatePlayerPacket upp) {

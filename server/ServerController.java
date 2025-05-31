@@ -62,7 +62,7 @@ public class ServerController {
     }
   }
 
-  public void handleTeamSelection(int playerId, String teamName) {
+  public void selectTeam(int playerId, String teamName) {
     if (gameState == GameState.LOBBY) {
       Team team = Team.valueOf(teamName.toUpperCase());
       playerInfos.get(playerId).team = team;
@@ -129,6 +129,11 @@ public class ServerController {
     // Broadcast ResetPacket to all clients
     networkManager.broadcast(new ResetPacket());
     networkManager.broadcast(new SetScorePacket(game.blueScore, game.redScore));
+    if (game.isGameOver()) {
+      System.out.println("[server:controller] Game over!");
+      stopGame();
+      networkManager.broadcast(new SwitchStatePacket("GAME_OVER"));
+    }
   }
 
   public void updatePlayer(int playerId, float x, float y, boolean tethering, boolean alive) {

@@ -20,7 +20,8 @@ public class ClientController {
   public enum GameState {
     MENU,
     LOBBY,
-    IN_GAME
+    IN_GAME,
+    GAME_OVER
   }
   
   private ClientPacketManager packetManager;
@@ -76,6 +77,11 @@ public class ClientController {
       case IN_GAME:
         startGame();
         screen.showScreen("gameScreen");
+        break;
+      case GAME_OVER:
+        stopGame();
+        screen.gameOverScreen.updateScore(game.blueScore, game.redScore);
+        screen.showScreen("gameOverScreen");
         break;
     }
   }

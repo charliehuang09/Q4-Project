@@ -13,6 +13,8 @@ public class ClientScreen extends JPanel implements ActionListener {
   private JPanel mainPanel;
   private CardLayout cardLayout;
 
+  public GameOverScreen gameOverScreen; // for controller to access
+
   private ClientController controller;
 
   private ScheduledExecutorService executor;
@@ -26,12 +28,12 @@ public class ClientScreen extends JPanel implements ActionListener {
     MenuScreen menuScreen = new MenuScreen(this);
     LobbyScreen lobbyScreen = new LobbyScreen(this);
     GameScreen gameScreen = new GameScreen(this);
-    // gameScreen.addKeyListener(gameScreen);
-    // gameScreen.setFocusable(true);
+    gameOverScreen = new GameOverScreen(this);
 
     mainPanel.add(menuScreen, "menuScreen");
     mainPanel.add(lobbyScreen, "lobbyScreen");
     mainPanel.add(gameScreen, "gameScreen");
+    mainPanel.add(gameOverScreen, "gameOverScreen");
     frame.add(mainPanel);
     frame.setFocusable(true);
 
