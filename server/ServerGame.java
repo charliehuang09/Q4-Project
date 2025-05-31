@@ -32,19 +32,24 @@ public class ServerGame extends Game {
 
     boolean blueDead = true;
     boolean redDead = true;
+    boolean anyBlue = false;
+    boolean anyRed = false;
     for (Player p : players.values()) {
-      if (!p.alive) {
-        continue;
-      }
       p.graple.update(dt, p.graple.active);
       if (p.team == Team.BLUE) {
-        blueDead = false;
+        anyBlue = true;
+        if (p.alive) {
+         blueDead = false;
+        }
       } else if (p.team == Team.RED) {
-        redDead = false;
+        anyRed = true;
+        if (p.alive) {
+          redDead = false;
+        }
       }
     }
 
-    if (blueDead || redDead) {
+    if ((blueDead && anyBlue) || (redDead && anyRed)) {
       controller.nextRound();
     }
 

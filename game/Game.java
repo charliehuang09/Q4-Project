@@ -32,7 +32,6 @@ public abstract class Game {
 
   public Game() {
     reset();
-    executor = Executors.newScheduledThreadPool(1);
   }
 
   public void addSprite(Sprite sprite) {
@@ -108,6 +107,7 @@ public abstract class Game {
   }
 
   public void reset() {
+    System.out.println("[game] Resetting game state...");
     this.sprites = new MyArrayList<Sprite>();
 
     resetDeathBall();
@@ -124,12 +124,17 @@ public abstract class Game {
 
   public void start() {
     reset();
+
+    executor = Executors.newScheduledThreadPool(1);
     executor.scheduleAtFixedRate(this::update, 0, 1000 / 60, TimeUnit.MILLISECONDS);
   }
 
   public abstract void update();
 
   public void stop() {
-    executor.shutdown();
+    System.out.println("[game] Stopping game...");
+    if (executor != null && !executor.isShutdown()) {
+      executor.shutdownNow();
+    }
   }
 }

@@ -19,6 +19,7 @@ public class MyHashMap<K, V> {
         keySet.add(key);
 
         V res = get(index);
+        if (res == null) size++;
         hashArray[index] = value;
         return res;
     }
@@ -37,6 +38,8 @@ public class MyHashMap<K, V> {
         V res = get(key);
         hashArray[index] = null;
         keySet.remove((K) key);
+
+        if (res != null) size--;
 
         return res;
     }

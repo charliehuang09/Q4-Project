@@ -133,4 +133,8 @@ public class ServerNetworkManager {
       broadcast(udp);
     }, 0, 1000 / 20, TimeUnit.MILLISECONDS);
   }
+
+  public void stopSending() {
+    sendingExecutor.shutdown();
+  }
 }

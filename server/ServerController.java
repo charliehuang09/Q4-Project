@@ -113,6 +113,14 @@ public class ServerController {
     networkManager.broadcast(switchStatePacket);
   }
 
+  public void stopGame() {
+    System.out.println("[server:controller] Stopping game...");
+    gameState = GameState.LOBBY;
+    networkManager.broadcast(new SwitchStatePacket("LOBBY"));
+    networkManager.stopSending();
+    game.stop();
+  }
+
   public void nextRound() {
     System.out.println("[server:controller] Starting next round...");
     game.reset();
@@ -133,7 +141,6 @@ public class ServerController {
   public void handleJoinRequest(int playerId, String clientName) {
     System.out.println("[server:controller] Player " + playerId + " requested to join with name: " + clientName);
 
-    // Broadcast player position updates
     playerInfos.put(playerId, new PlayerInfo(clientName, Team.NONE, false));
 
     // Add new placeholder player to the server's game
@@ -155,15 +162,18 @@ public class ServerController {
     System.out.println("[server:controller] Player " + playerId + " successfully joined the game.");
   }
 
+  public boolean checkGameExit() {
+    return playerInfos.size() == 0;
+  }
+
   public void onDisconnect(int playerId) {
     playerInfos.remove(playerId);
     game.removePlayer(playerId);
     networkManager.broadcast(new RemovePlayerPacket(playerId));
 
-    if (playerInfos.size() == 0) {
-      gameState = GameState.LOBBY;
-      game.reset();
-      System.out.println("[server:controller] All players disconnected. Resetting game.");
+    if (checkGameExit()) {
+      System.out.println("[server:controller] Not enough players left to continue the game. Stopping the game.");
+      stopGame();
     }
 
     System.out.println("[server:controller] Player " + playerId + " disconnected.");

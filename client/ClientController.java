@@ -70,6 +70,7 @@ public class ClientController {
         screen.showScreen("menuScreen");
         break;
       case LOBBY:
+        stopGame();
         screen.showScreen("lobbyScreen");
         break;
       case IN_GAME:
@@ -83,6 +84,11 @@ public class ClientController {
     System.out.println("[client:controller] Starting game");
     game.start();
     packetManager.startSending(game);
+  }
+
+  public void stopGame() {
+    packetManager.stopSending();
+    game.stop();
   }
 
   public void resetGame() {
@@ -119,10 +125,6 @@ public class ClientController {
   public void updateDeathBall(float x, float y, float x_vel, float y_vel) {
     dprintln("[client:controller] Updating death ball position to (" + x + ", " + y + ") with velocity (" + x_vel + ", " + y_vel + ")");
     game.updateDeathBall(x, y, x_vel, y_vel);
-  }
-
-  public void stopGame() {
-    game.stop();
   }
 
   public void drawGame(Graphics g) {

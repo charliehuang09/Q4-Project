@@ -18,15 +18,12 @@ public class ClientPacketManager extends PacketManager {
   protected DataInputStream in;
   protected DataOutputStream out;
 
-  private ExecutorService sendingExecutor;
-  private ScheduledExecutorService receivingExecutor;
+  private ExecutorService receivingExecutor;
+  private ScheduledExecutorService sendingExecutor;
 
   private ClientController controller;
 
   public ClientPacketManager() {
-    this.sendingExecutor = Executors.newFixedThreadPool(1);
-    this.receivingExecutor = Executors.newScheduledThreadPool(1);
-
     registerPacket(SwitchStatePacket.class);
     registerPacket(SetTeamPacket.class);
     registerPacket(UpdatePlayerPacket.class);
@@ -91,6 +88,7 @@ public class ClientPacketManager extends PacketManager {
       controller.stopGame();
       controller.setCurrentState(ClientController.GameState.MENU);
       socket.close();
+      receivingExecutor.shutdownNow();
       sendingExecutor.shutdownNow();
     } catch (IOException e) {
       throw new RuntimeException(e);
@@ -98,7 +96,8 @@ public class ClientPacketManager extends PacketManager {
   }
 
   public void startReceiving() {
-    sendingExecutor.submit(() -> {
+    receivingExecutor = Executors.newFixedThreadPool(1);
+    receivingExecutor.submit(() -> {
       try {
         while (true) {
           ClientController.dprintln("[client:network] Waiting for packet...");
@@ -113,10 +112,18 @@ public class ClientPacketManager extends PacketManager {
   }
 
   public void startSending(ClientGame game) {
-    receivingExecutor.scheduleAtFixedRate(() -> {
+    sendingExecutor = Executors.newScheduledThreadPool(1);
+    sendingExecutor.scheduleAtFixedRate(() -> {
       UpdatePlayerPacket upp = new UpdatePlayerPacket(controller.id, game.player.body.state.x, game.player.body.state.y,
           game.player.graple.active, game.player.alive);
       sendPacket(upp);
     }, 0, 1000 / 60, TimeUnit.MILLISECONDS);
+  }
+
+  public void stopSending() {
+    if (sendingExecutor != null && !sendingExecutor.isShutdown()) {
+      System.out.println("[client:network] Stopping sending executor...");
+      sendingExecutor.shutdownNow();
+    }
   }
 }
