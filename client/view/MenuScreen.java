@@ -9,7 +9,7 @@ public class MenuScreen extends JPanel {
     this.setLayout(null);
 
     JLabel titleLabel = new JLabel("Bonk", SwingConstants.CENTER);
-    titleLabel.setFont(new Font("Arial", Font.BOLD, 50));
+    titleLabel.setFont(new Font("Bahnschrift", Font.BOLD, 50));
     titleLabel.setBounds(0, 20, 1000, 50);
     this.add(titleLabel);
 

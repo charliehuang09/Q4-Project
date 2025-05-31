@@ -14,13 +14,12 @@ public class LobbyScreen extends JPanel {
     this.setLayout(null);
 
     JLabel titleLabel = new JLabel("Lobby", SwingConstants.CENTER);
-    titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+    titleLabel.setFont(new Font("Bahnschrift", Font.BOLD, 24));
     titleLabel.setBounds(0, 20, 1000, 50);
     this.add(titleLabel);
 
     // Team Selection
     teamLabel = new JLabel("Team: None", SwingConstants.CENTER);
-    teamLabel.setFont(new Font("Arial", Font.PLAIN, 18));
     teamLabel.setBounds(0, 80, 1000, 50);
     this.add(teamLabel);
 

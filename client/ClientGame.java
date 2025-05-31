@@ -99,7 +99,7 @@ public class ClientGame extends Game {
 
     // Draw game score
     g.setColor(Color.BLACK);
-    g.setFont(new Font("Arial", Font.BOLD, 30));
+    g.setFont(new Font("Bahnschrift", Font.BOLD, 30));
     FontMetrics fm = g.getFontMetrics();
     int width;
     

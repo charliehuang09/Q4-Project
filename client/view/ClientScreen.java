@@ -3,7 +3,6 @@ package client.view;
 import client.ClientController;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.event.ActionListener;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -25,6 +24,14 @@ public class ClientScreen extends JPanel implements ActionListener {
     JFrame frame = new JFrame("Client Screen");
     cardLayout = new CardLayout();
     mainPanel = new JPanel(cardLayout);
+
+    try {
+      UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+      UIManager.put("Button.font", new Font("Bahnschrift", Font.PLAIN, 24));
+      UIManager.put("Label.font", new Font("Bahnschrift", Font.PLAIN, 20));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
     // Start Screen
     MenuScreen menuScreen = new MenuScreen(this);
@@ -78,5 +85,6 @@ public class ClientScreen extends JPanel implements ActionListener {
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {}
+  public void actionPerformed(ActionEvent e) {
+  }
 }
