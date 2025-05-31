@@ -1,7 +1,6 @@
 package client.view;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import javax.swing.*;
 
 public class LobbyScreen extends JPanel {
@@ -36,7 +35,7 @@ public class LobbyScreen extends JPanel {
     this.add(redTeamButton);
 
     readyButton = new JButton("Ready");
-    readyButton.addActionListener(this::toggleReady);
+    readyButton.addActionListener(e -> toggleReady());
     readyButton.setBounds(400, 250, 200, 50);
     this.add(readyButton);
 
@@ -48,7 +47,7 @@ public class LobbyScreen extends JPanel {
     clientScreen.getController().requestTeam(team.toUpperCase());
   }
 
-  private void toggleReady(ActionEvent e) {
+  public void toggleReady() {
     isReady = !isReady;
     readyButton.setText(isReady ? "Unready" : "Ready");
     clientScreen.getController().readyUp(isReady);

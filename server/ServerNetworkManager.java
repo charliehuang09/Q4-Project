@@ -32,7 +32,6 @@ public class ServerNetworkManager {
 
   public ServerNetworkManager() {
     receivingExecutor = Executors.newFixedThreadPool(MAX_CONNECTIONS);
-    sendingExecutor = Executors.newScheduledThreadPool(1);
     connectionManagers = new MyArrayList<>();
     clientIps = new MyArrayList<>();
   }
@@ -109,6 +108,7 @@ public class ServerNetworkManager {
   }
 
   public void startSending(Game game) {
+    sendingExecutor = Executors.newScheduledThreadPool(1);
     sendingExecutor.scheduleAtFixedRate(() -> {
       if (controller.getGameState() != ServerController.GameState.IN_GAME) {
         return;

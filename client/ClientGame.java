@@ -21,10 +21,6 @@ public class ClientGame extends Game {
     this.controller = controller;
   }
 
-  public Player getPlayer() {
-    return this.player;
-  }
-
   public void initPlayer() {
     this.player = new Player(0, 0, "PlayerName", Team.NONE, deathBall);
   }

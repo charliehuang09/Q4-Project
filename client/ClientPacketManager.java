@@ -125,7 +125,6 @@ public class ClientPacketManager extends PacketManager {
 
   public void stopSending() {
     if (sendingExecutor != null && !sendingExecutor.isShutdown()) {
-      System.out.println("[client:network] Stopping sending executor...");
       sendingExecutor.shutdownNow();
     }
   }

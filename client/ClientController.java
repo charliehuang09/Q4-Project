@@ -49,7 +49,7 @@ public class ClientController {
   public void selectTeam(int playerId, String team) {
     if (playerId == id) {
       System.out.println("[client:controller] Setting own team to: " + team);
-      game.getPlayer().team = Team.valueOf(team);
+      game.player.team = Team.valueOf(team);
     } else {
       game.updatePlayerTeam(playerId, Team.valueOf(team));
     }
@@ -57,7 +57,7 @@ public class ClientController {
   
   public void requestTeam(String team) {
     sendPacket(new TeamSelectionPacket(team));
-    game.getPlayer().team = Team.valueOf(team);
+    game.player.team = Team.valueOf(team);
   }
 
   public void readyUp(boolean ready) {
@@ -80,7 +80,7 @@ public class ClientController {
         break;
       case GAME_OVER:
         stopGame();
-        screen.gameOverScreen.updateScore(game.blueScore, game.redScore);
+        screen.updateScore(game.blueScore, game.redScore);
         screen.showScreen("gameOverScreen");
         break;
     }
@@ -88,11 +88,13 @@ public class ClientController {
 
   public void startGame() {
     System.out.println("[client:controller] Starting game");
+    screen.toggleReady(); // unready before starting a new game
     game.start();
     packetManager.startSending(game);
   }
 
   public void stopGame() {
+    System.out.println("[client:controller] Stopping game");
     packetManager.stopSending();
     game.stop();
   }

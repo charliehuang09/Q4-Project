@@ -56,7 +56,6 @@ public class ServerController {
 
     try {
       networkManager.startReceiving(31415);
-      networkManager.startSending(game);
     } catch (IOException e) {
       throw new RuntimeException("Failed to start server");
     }
@@ -98,6 +97,8 @@ public class ServerController {
     for (Integer playerId : playerInfos.keySet()) {
       PlayerInfo playerInfo = playerInfos.get(playerId);
 
+      playerInfo.isReady = false; // Reset ready status for the new game
+
       if (playerInfo.team == Team.NONE) {
         // Assign a team if not already assigned
         playerInfo.team = (Math.random() > 0.5) ? Team.RED : Team.BLUE;
@@ -107,6 +108,7 @@ public class ServerController {
     }
 
     game.start();
+    networkManager.startSending(game);
     gameState = GameState.IN_GAME;
 
     // Broadcast SwitchStatePacket to all clients

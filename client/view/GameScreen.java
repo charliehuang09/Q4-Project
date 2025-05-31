@@ -35,7 +35,6 @@ public class GameScreen extends JPanel implements KeyListener {
 
   @Override
   protected void paintComponent(Graphics g) {
-    // TODO Jeremy fix
     requestFocusInWindow();
     super.paintComponent(g);
     
