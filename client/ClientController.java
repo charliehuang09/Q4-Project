@@ -1,8 +1,7 @@
 package client;
 
-import java.awt.Graphics;
-
 import client.view.ClientScreen;
+import java.awt.Graphics;
 import model.Player;
 import model.Team;
 import network.Packet;
@@ -11,6 +10,7 @@ import util.Util;
 
 public class ClientController {
   public static final boolean DEBUG = false;
+
   static void dprintln(String message) {
     if (DEBUG) System.out.println(message);
   }
@@ -22,10 +22,10 @@ public class ClientController {
     IN_GAME,
     GAME_OVER
   }
-  
+
   private ClientPacketManager packetManager;
   private ClientScreen screen;
-  
+
   public int id;
   private ClientGame game;
   public boolean[] keys = new boolean[5];
@@ -53,7 +53,7 @@ public class ClientController {
       game.updatePlayerTeam(playerId, Team.valueOf(team));
     }
   }
-  
+
   public void requestTeam(String team) {
     sendPacket(new TeamSelectionPacket(team));
     game.player.team = Team.valueOf(team);
@@ -125,24 +125,42 @@ public class ClientController {
     game.removePlayer(playerId);
   }
 
-  public void updatePlayer(int playerId, float x, float y, boolean tethering, float tetherLength, boolean alive) {
+  public void updatePlayer(
+      int playerId, float x, float y, boolean tethering, float tetherLength, boolean alive) {
     if (playerId == id) {
       return; // Don't update own position from server packets
     }
 
-    dprintln("[client:controller] Updating position for player " + playerId + " to (" + x + ", " + y + ")");
+    dprintln(
+        "[client:controller] Updating position for player "
+            + playerId
+            + " to ("
+            + x
+            + ", "
+            + y
+            + ")");
     game.updatePlayerPosition(playerId, x, y);
     game.updatePlayerTethering(playerId, tethering, tetherLength);
     game.updatePlayerAlive(playerId, alive);
   }
 
   public void updateDeathBall(float x, float y, float x_vel, float y_vel) {
-    dprintln("[client:controller] Updating death ball position to (" + x + ", " + y + ") with velocity (" + x_vel + ", " + y_vel + ")");
+    dprintln(
+        "[client:controller] Updating death ball position to ("
+            + x
+            + ", "
+            + y
+            + ") with velocity ("
+            + x_vel
+            + ", "
+            + y_vel
+            + ")");
     game.updateDeathBall(x, y, x_vel, y_vel);
   }
 
   public void setScore(int blueScore, int redScore) {
-    System.out.println("[client:controller] Setting score - Blue: " + blueScore + ", Red: " + redScore);
+    System.out.println(
+        "[client:controller] Setting score - Blue: " + blueScore + ", Red: " + redScore);
     game.setScore(blueScore, redScore);
   }
 
@@ -151,7 +169,7 @@ public class ClientController {
   }
 
   public void attemptConnect() {
-    connect("localhost", 31415);
+    connect("10.210.124.243", 31415);
     sendPacket(new JoinRequestPacket("PlayerName")); // TODO: get player name from input
   }
 
